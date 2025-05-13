@@ -1,1 +1,285 @@
-hellow world
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, [Boyfriend's Name]!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fef3f2; /* Light pink background */
+            color: #333;
+            line-height: 1.6;
+            position: relative; /* Needed for the modal positioning */
+        }
+        .section-heading {
+            color: #e53e3e; /* Red heading color */
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 0.75rem; /* Rounded corners */
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        .photo-grid img {
+            width: 100%;
+            height: auto;
+            border-radius: 0.5rem; /* Rounded corners for images */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease-in-out;
+        }
+        .photo-grid img:hover {
+            transform: scale(1.05);
+        }
+        .reason-item {
+            background-color: #fff;
+            border-left: 4px solid #f687b3; /* Pink border */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .adventure-item {
+             background-color: #fff;
+             border-radius: 0.5rem;
+             padding: 1rem;
+             margin-bottom: 1rem;
+             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+             border-left: 4px solid #63b3ed; /* Blue border */
+        }
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #fed7d7; /* Light red border */
+            color: #718096; /* Gray text */
+            font-size: 0.9rem;
+        }
+        /* Simple fade-in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease-out;
+        }
+         .modal-overlay.show .modal-content {
+            transform: translateY(0);
+         }
+        .close-button {
+            margin-top: 1.5rem;
+            padding: 0.5rem 1.5rem;
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        .close-button:hover {
+            background-color: #c53030;
+        }
+
+        /* Countdown Timer Styles */
+        .countdown {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #d69e2e; /* Yellowish color */
+        }
+        .countdown span {
+            display: inline-block;
+            margin: 0 0.5rem;
+        }
+        .countdown .value {
+            font-size: 2rem;
+            color: #dd6b20; /* Orange color */
+        }
+
+    </style>
+</head>
+<body class="fade-in">
+
+    <div id="birthday-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="text-2xl font-bold mb-4">A Special Message for You!</h3>
+            <p>[Write a short, sweet message that appears when he opens the site. For example: "Hey my love! Welcome to a little corner of the internet dedicated just to you. Happy early birthday!"]</p>
+            <button class="close-button" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <header class="bg-pink-300 text-white py-12 text-center rounded-b-lg shadow-md">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Happy Birthday, <span id="boyfriend-name-header">[Boyfriend's Name]</span>!</h1>
+        <p class="text-xl md:text-2xl">Celebrating you today and always!</p>
+
+        <div class="countdown">
+            <p>Time until your birthday:</p>
+            <span id="countdown-days"><span class="value">0</span> Days</span>
+            <span id="countdown-hours"><span class="value">0</span> Hours</span>
+            <span id="countdown-minutes"><span class="value">0</span> Minutes</span>
+            <span id="countdown-seconds"><span class="value">0</span> Seconds</span>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+
+        <section class="my-12 card">
+            <h2 class="text-3xl section-heading">Our Story</h2>
+            <p class="text-gray-700 mb-4">
+                [Write a sweet paragraph or two about how you met, a special memory, or the journey of your relationship. Make it personal and heartwarming!]
+                For example: "It all started on that rainy Tuesday in [Month, Year] when we first met at [Place]. I knew from that moment..."
+            </p>
+            <div class="photo-grid">
+                 <img src="https://placehold.co/400x300/F687B3/FFFFFF?text=Your+Photo+1" alt="Memory Photo 1">
+                <img src="https://placehold.co/400x300/F687B3/FFFFFF?text=Your+Photo+2" alt="Memory Photo 2">
+                <img src="https://placehold.co/400x300/F687B3/FFFFFF?text=Your+Photo+3" alt="Memory Photo 3">
+                </div>
+        </section>
+
+        <section class="my-12 card">
+            <h2 class="text-3xl section-heading">Favorite Moments</h2>
+            <div class="photo-grid">
+                <img src="https://placehold.co/400x300/FED7D7/333333?text=Fun+Photo+1" alt="Favorite Moment 1">
+                <img src="https://placehold.co/400x300/FED7D7/333333?text=Fun+Photo+2" alt="Favorite Moment 2">
+                <img src="https://placehold.co/400x300/FED7D7/333333?text=Fun+Photo+3" alt="Favorite Moment 3">
+                <img src="https://placehold.co/400x300/FED7D7/333333?text=Fun+Photo+4" alt="Favorite Moment 4">
+                <img src="https://placehold.co/400x300/FED7D7/333333?text=Fun+Photo+5" alt="Favorite Moment 5">
+                <img src="https://placehold.co/400x300/FED7D7/333333?text=Fun+Photo+6" alt="Favorite Moment 6">
+                 </div>
+        </section>
+
+        <section class="my-12 card">
+            <h2 class="text-3xl section-heading">Reasons I Love You</h2>
+            <div class="space-y-4">
+                <div class="reason-item">Your kindness and compassion.</div>
+                <div class="reason-item">Your amazing sense of humor.</div>
+                <div class="reason-item">The way you always support me.</div>
+                <div class="reason-item">Your infectious smile.</div>
+                <div class="reason-item">Every adventure we share.</div>
+                </div>
+        </section>
+
+        <section class="my-12 card">
+            <h2 class="text-3xl section-heading">Our Future Adventures</h2>
+            <div class="space-y-4">
+                 <div class="adventure-item">Traveling to [Dream Destination].</div>
+                <div class="adventure-item">Trying out [New Hobby/Activity] together.</div>
+                <div class="adventure-item">Building a cozy home together.</div>
+                <div class="adventure-item">Exploring new restaurants in [City/Town].</div>
+                </div>
+        </section>
+
+    </main>
+
+    <footer class="footer bg-pink-100 py-6">
+        <p>Created with love for my amazing boyfriend.</p>
+        <p>&copy; <span id="current-year"></span> Your Name</p>
+    </footer>
+
+    <script>
+        // Script to update the current year in the footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Script to replace placeholder name
+        const boyfriendName = "[Boyfriend's Name]"; // <-- Replace with his actual name
+        document.getElementById('boyfriend-name-header').textContent = boyfriendName;
+
+        // --- Modal Functionality ---
+        const modal = document.getElementById('birthday-modal');
+
+        // Function to show the modal
+        function showModal() {
+            modal.classList.add('show');
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            modal.classList.remove('show');
+        }
+
+        // Show the modal when the page loads
+        window.onload = showModal;
+
+        // --- Countdown Timer Functionality ---
+        // Set the date of his birthday (Year, Month (0-indexed), Day, Hour, Minute, Second)
+        // IMPORTANT: Replace with his actual birthday date and time
+        const birthdayDate = new Date("YYYY-MM-DDTHH:mm:ss").getTime(); // Example: new Date("2025-12-25T00:00:00").getTime();
+
+        // Update the countdown every 1 second
+        const countdownInterval = setInterval(function() {
+
+            // Get the current date and time
+            const now = new Date().getTime();
+
+            // Calculate the distance between now and the birthday date
+            const distance = birthdayDate - now;
+
+            // If the countdown is finished, display a message
+            if (distance < 0) {
+                clearInterval(countdownInterval);
+                document.querySelector(".countdown").innerHTML = "Happy Birthday!";
+                return; // Stop the function here
+            }
+
+            // Time calculations for days, hours, minutes and seconds
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Display the result in the respective elements
+            document.getElementById("countdown-days").innerHTML = "<span class='value'>" + days + "</span> Days";
+            document.getElementById("countdown-hours").innerHTML = "<span class='value'>" + hours + "</span> Hours";
+            document.getElementById("countdown-minutes").innerHTML = "<span class='value'>" + minutes + "</span> Minutes";
+            document.getElementById("countdown-seconds").innerHTML = "<span class='value'>" + seconds + "</span> Seconds";
+
+        }, 1000); // Update every 1000 milliseconds (1 second)
+
+    </script>
+
+</body>
+</html>
