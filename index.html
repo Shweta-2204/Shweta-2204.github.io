@@ -1,285 +1,918 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday, [Boyfriend's Name]!</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #fef3f2; /* Light pink background */
-            color: #333;
-            line-height: 1.6;
-            position: relative; /* Needed for the modal positioning */
-        }
-        .section-heading {
-            color: #e53e3e; /* Red heading color */
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-        .card {
-            background-color: #fff;
-            border-radius: 0.75rem; /* Rounded corners */
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-        }
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-        }
-        .photo-grid img {
-            width: 100%;
-            height: auto;
-            border-radius: 0.5rem; /* Rounded corners for images */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease-in-out;
-        }
-        .photo-grid img:hover {
-            transform: scale(1.05);
-        }
-        .reason-item {
-            background-color: #fff;
-            border-left: 4px solid #f687b3; /* Pink border */
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-        .adventure-item {
-             background-color: #fff;
-             border-radius: 0.5rem;
-             padding: 1rem;
-             margin-bottom: 1rem;
-             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-             border-left: 4px solid #63b3ed; /* Blue border */
-        }
-        .footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #fed7d7; /* Light red border */
-            color: #718096; /* Gray text */
-            font-size: 0.9rem;
-        }
-        /* Simple fade-in animation */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .fade-in {
-            animation: fadeIn 1s ease-out;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Countdown</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
 
-        /* Modal styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
-        }
-        .modal-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        .modal-content {
-            background-color: #fff;
-            padding: 2rem;
-            border-radius: 0.75rem;
-            text-align: center;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            max-width: 90%;
-            transform: translateY(-20px);
-            transition: transform 0.3s ease-out;
-        }
-         .modal-overlay.show .modal-content {
-            transform: translateY(0);
-         }
-        .close-button {
-            margin-top: 1.5rem;
-            padding: 0.5rem 1.5rem;
-            background-color: #e53e3e;
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s ease;
-        }
-        .close-button:hover {
-            background-color: #c53030;
-        }
+    :root {
+      --primary-color: #ff3a7c;
+      --secondary-color: #7b2cbf;
+      --accent-color: #14f5da;
+      --bg-color: #0d0221;
+      --text-color: #ffffff;
+    }
 
-        /* Countdown Timer Styles */
-        .countdown {
-            text-align: center;
-            margin-top: 2rem;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #d69e2e; /* Yellowish color */
-        }
-        .countdown span {
-            display: inline-block;
-            margin: 0 0.5rem;
-        }
-        .countdown .value {
-            font-size: 2rem;
-            color: #dd6b20; /* Orange color */
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    </style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      overflow: hidden;
+      perspective: 1000px;
+    }
+
+    .universe {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(ellipse at bottom, #1a0941 0%, #000000 100%);
+      z-index: -2;
+    }
+
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .star {
+      position: absolute;
+      background-color: #ffffff;
+      border-radius: 50%;
+    }
+
+    .constellation {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .constellation-line {
+      position: absolute;
+      background: linear-gradient(90deg, var(--accent-color), transparent);
+      height: 1px;
+      transform-origin: left center;
+      opacity: 0.3;
+      box-shadow: 0 0 5px var(--accent-color);
+    }
+
+    .cosmic-spiral {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      opacity: 0.1;
+      background: conic-gradient(from 0deg at 50% 50%,
+          var(--primary-color),
+          var(--secondary-color),
+          var(--accent-color),
+          var(--primary-color));
+      filter: blur(30px);
+      animation: rotate 60s linear infinite;
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .main-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+      z-index: 1;
+    }
+
+    .countdown-container {
+      position: relative;
+      margin-bottom: 4rem;
+      transform-style: preserve-3d;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(-20px) rotate(2deg);
+      }
+    }
+
+    .time-orbit {
+      position: relative;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: rgba(123, 44, 191, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform-style: preserve-3d;
+      animation: pulse 8s ease-in-out infinite alternate;
+    }
+
+    .inner-circle {
+      position: absolute;
+      width: 70%;
+      height: 70%;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: radial-gradient(circle at center, rgba(20, 245, 218, 0.1), transparent 70%);
+    }
+
+    .core {
+      position: absolute;
+      width: 40%;
+      height: 40%;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(255, 58, 124, 0.2), transparent 70%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      text-align: center;
+      animation: glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      0% {
+        box-shadow: 0 0 20px rgba(255, 58, 124, 0.3);
+      }
+
+      100% {
+        box-shadow: 0 0 50px rgba(255, 58, 124, 0.6);
+      }
+    }
+
+    .time-unit {
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(13, 2, 33, 0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 20px rgba(123, 44, 191, 0.4);
+      color: var(--text-color);
+      transform-style: preserve-3d;
+    }
+
+    #days {
+      transform: translateX(200px);
+      background: linear-gradient(135deg, rgba(255, 58, 124, 0.3), rgba(13, 2, 33, 0.8));
+    }
+
+    #hours {
+      transform: translateY(-200px);
+      background: linear-gradient(135deg, rgba(123, 44, 191, 0.3), rgba(13, 2, 33, 0.8));
+    }
+
+    #minutes {
+      transform: translateX(-200px);
+      background: linear-gradient(135deg, rgba(20, 245, 218, 0.3), rgba(13, 2, 33, 0.8));
+    }
+
+    #seconds {
+      transform: translateY(200px);
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.3), rgba(13, 2, 33, 0.8));
+      animation: pulse-seconds 1s linear infinite;
+    }
+
+    @keyframes pulse-seconds {
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(255, 193, 7, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 30px rgba(255, 193, 7, 0.7);
+      }
+    }
+
+    .time-value {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .time-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.8;
+    }
+
+    .orbital-path {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      animation: rotate-orbit 60s linear infinite;
+    }
+
+    @keyframes rotate-orbit {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-align: center;
+      color: transparent;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: title-shimmer 5s linear infinite;
+      text-shadow: 0 0 10px rgba(255, 58, 124, 0.5);
+    }
+
+    @keyframes title-shimmer {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      100% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .message {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 300;
+      font-size: 1.2rem;
+      max-width: 600px;
+      text-align: center;
+      line-height: 1.6;
+      margin-bottom: 3rem;
+      opacity: 0.9;
+      position: relative;
+    }
+
+    .message::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+    }
+
+    .time-remaining {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      margin-top: 2rem;
+      opacity: 0.8;
+      text-align: center;
+    }
+
+    .interactive-button {
+      margin-top: 2rem;
+      padding: 1rem 2.5rem;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px rgba(255, 58, 124, 0.4);
+      z-index: 1;
+    }
+
+    .interactive-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: all 0.5s ease;
+      z-index: -1;
+    }
+
+    .interactive-button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(255, 58, 124, 0.6);
+    }
+
+    .interactive-button:hover::before {
+      left: 100%;
+    }
+
+    .signature {
+      position: absolute;
+      bottom: 2rem;
+      font-size: 0.9rem;
+      opacity: 0.7;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+    }
+
+    .magic-dust {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10;
+      opacity: 0;
+    }
+
+    @keyframes magic-trail {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(var(--dx), var(--dy)) scale(0);
+      }
+    }
+
+    .comets {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .comet {
+      position: absolute;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-color), white);
+      opacity: 0;
+      transform-origin: left center;
+      z-index: -1;
+    }
+
+    @keyframes comet {
+      0% {
+        opacity: 0;
+        transform: translateX(-100%) translateY(0) rotate(var(--angle));
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      80% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateX(200%) translateY(var(--offset)) rotate(var(--angle));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .title {
+        font-size: 2.5rem;
+      }
+
+      .time-orbit {
+        width: 300px;
+        height: 300px;
+      }
+
+      .time-unit {
+        width: 70px;
+        height: 70px;
+      }
+
+      #days {
+        transform: translateX(120px);
+      }
+
+      #hours {
+        transform: translateY(-120px);
+      }
+
+      #minutes {
+        transform: translateX(-120px);
+      }
+
+      #seconds {
+        transform: translateY(120px);
+      }
+
+      .time-value {
+        font-size: 1.5rem;
+      }
+
+      .time-label {
+        font-size: 0.6rem;
+      }
+    }
+
+    .celebration-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at bottom, #1a0941 0%, #000000 100%);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+    }
+
+    .celebration-active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .celebration-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-align: center;
+      color: transparent;
+      background: linear-gradient(90deg, #ff3a7c, #ffcc00, #14f5da, #7b2cbf, #ff3a7c);
+      background-size: 400% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: rainbow-text 10s linear infinite;
+      text-shadow: 0 0 20px rgba(255, 58, 124, 0.7);
+    }
+
+    @keyframes rainbow-text {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      100% {
+        background-position: 400% 50%;
+      }
+    }
+
+    .celebration-message {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 300;
+      font-size: 1.5rem;
+      max-width: 800px;
+      text-align: center;
+      line-height: 1.8;
+      margin-bottom: 3rem;
+    }
+
+    .firework {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      box-shadow: 0 0 10px 2px #fff;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @keyframes firework-explosion {
+      0% {
+        transform: translate(var(--x), var(--y));
+        width: 5px;
+        height: 5px;
+        opacity: 1;
+        box-shadow: 0 0 10px 2px #fff;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translate(calc(var(--x) + var(--dx)),
+            calc(var(--y) + var(--dy)));
+        width: 0;
+        height: 0;
+        opacity: 0;
+        box-shadow: 0 0 20px 4px var(--color);
+      }
+    }
+
+    .celebration-button {
+      margin-top: 3rem;
+      padding: 1.5rem 3rem;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+      background-size: 200% 100%;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 30px rgba(255, 58, 124, 0.6);
+      animation: button-shimmer 3s linear infinite;
+    }
+
+    @keyframes button-shimmer {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      100% {
+        background-position: 200% 50%;
+      }
+    }
+  </style>
 </head>
-<body class="fade-in">
 
-    <div id="birthday-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 class="text-2xl font-bold mb-4">A Special Message for You!</h3>
-            <p>[Write a short, sweet message that appears when he opens the site. For example: "Hey my love! Welcome to a little corner of the internet dedicated just to you. Happy early birthday!"]</p>
-            <button class="close-button" onclick="closeModal()">Close</button>
+<body>
+  <div class="universe">
+    <div class="stars" id="stars"></div>
+    <div class="constellation" id="constellation"></div>
+    <div class="cosmic-spiral"></div>
+    <div class="comets" id="comets"></div>
+  </div>
+
+  <div class="main-container">
+
+    <p class="message">Shortie's birthday in .</p>
+
+    <div class="countdown-container">
+      <div class="time-orbit">
+        <div class="orbital-path"></div>
+        <div class="inner-circle"></div>
+
+        <div class="time-unit" id="days">
+          <div class="time-value">--</div>
+          <div class="time-label">Days</div>
         </div>
+
+        <div class="time-unit" id="hours">
+          <div class="time-value">--</div>
+          <div class="time-label">Hours</div>
+        </div>
+
+        <div class="time-unit" id="minutes">
+          <div class="time-value">--</div>
+          <div class="time-label">Minutes</div>
+        </div>
+
+        <div class="time-unit" id="seconds">
+          <div class="time-value">--</div>
+          <div class="time-label">Seconds</div>
+        </div>
+
+        <div class="core">
+          <div class="time-remaining" id="time-remaining">Until your day</div>
+        </div>
+      </div>
     </div>
 
-    <header class="bg-pink-300 text-white py-12 text-center rounded-b-lg shadow-md">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">Happy Birthday, <span id="boyfriend-name-header">[Boyfriend's Name]</span>!</h1>
-        <p class="text-xl md:text-2xl">Celebrating you today and always!</p>
+    <button class="interactive-button" id="interactive-button">Message from Kalu 💌</button>
 
-        <div class="countdown">
-            <p>Time until your birthday:</p>
-            <span id="countdown-days"><span class="value">0</span> Days</span>
-            <span id="countdown-hours"><span class="value">0</span> Hours</span>
-            <span id="countdown-minutes"><span class="value">0</span> Minutes</span>
-            <span id="countdown-seconds"><span class="value">0</span> Seconds</span>
-        </div>
-    </header>
 
-    <main class="container mx-auto px-4 py-8">
+  </div>
 
-        <section class="my-12 card">
-            <h2 class="text-3xl section-heading">Our Story</h2>
-            <p class="text-gray-700 mb-4">
-                [Write a sweet paragraph or two about how you met, a special memory, or the journey of your relationship. Make it personal and heartwarming!]
-                For example: "It all started on that rainy Tuesday in [Month, Year] when we first met at [Place]. I knew from that moment..."
-            </p>
-            <div class="photo-grid">
-                 <img src="https://placehold.co/400x300/F687B3/FFFFFF?text=Your+Photo+1" alt="Memory Photo 1">
-                <img src="https://placehold.co/400x300/F687B3/FFFFFF?text=Your+Photo+2" alt="Memory Photo 2">
-                <img src="https://placehold.co/400x300/F687B3/FFFFFF?text=Your+Photo+3" alt="Memory Photo 3">
-                </div>
-        </section>
+  <div class="celebration-container" id="celebration-container">
+    <h1 class="celebration-title">HAPPY BIRTHDAY!</h1>
+    <p class="celebration-message">Today the universe celebrates your existence. Every star shines for you, every cosmic
+      ray carries my love. You are my galaxy, my universe, my everything.</p>
+    <button class="celebration-button" id="celebration-button">❤️ I Love You Beyond Words ❤️</button>
+  </div>
 
-        <section class="my-12 card">
-            <h2 class="text-3xl section-heading">Favorite Moments</h2>
-            <div class="photo-grid">
-                <img src="https://placehold.co/400x300/FED7D7/333333?text=Fun+Photo+1" alt="Favorite Moment 1">
-                <img src="https://placehold.co/400x300/FED7D7/333333?text=Fun+Photo+2" alt="Favorite Moment 2">
-                <img src="https://placehold.co/400x300/FED7D7/333333?text=Fun+Photo+3" alt="Favorite Moment 3">
-                <img src="https://placehold.co/400x300/FED7D7/333333?text=Fun+Photo+4" alt="Favorite Moment 4">
-                <img src="https://placehold.co/400x300/FED7D7/333333?text=Fun+Photo+5" alt="Favorite Moment 5">
-                <img src="https://placehold.co/400x300/FED7D7/333333?text=Fun+Photo+6" alt="Favorite Moment 6">
-                 </div>
-        </section>
+  <script>
+    // Create star background
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      const starCount = 200;
 
-        <section class="my-12 card">
-            <h2 class="text-3xl section-heading">Reasons I Love You</h2>
-            <div class="space-y-4">
-                <div class="reason-item">Your kindness and compassion.</div>
-                <div class="reason-item">Your amazing sense of humor.</div>
-                <div class="reason-item">The way you always support me.</div>
-                <div class="reason-item">Your infectious smile.</div>
-                <div class="reason-item">Every adventure we share.</div>
-                </div>
-        </section>
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
 
-        <section class="my-12 card">
-            <h2 class="text-3xl section-heading">Our Future Adventures</h2>
-            <div class="space-y-4">
-                 <div class="adventure-item">Traveling to [Dream Destination].</div>
-                <div class="adventure-item">Trying out [New Hobby/Activity] together.</div>
-                <div class="adventure-item">Building a cozy home together.</div>
-                <div class="adventure-item">Exploring new restaurants in [City/Town].</div>
-                </div>
-        </section>
+        const size = Math.random() * 3 + 1;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
 
-    </main>
+        // Randomize position
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.left = `${Math.random() * 100}%`;
 
-    <footer class="footer bg-pink-100 py-6">
-        <p>Created with love for my amazing boyfriend.</p>
-        <p>&copy; <span id="current-year"></span> Your Name</p>
-    </footer>
+        // Add twinkling effect
+        const duration = Math.random() * 5 + 3;
+        star.style.animation = `pulse ${duration}s ease-in-out infinite alternate`;
+        star.style.animationDelay = `${Math.random() * duration}s`;
 
-    <script>
-        // Script to update the current year in the footer
-        document.getElementById('current-year').textContent = new Date().getFullYear();
+        starsContainer.appendChild(star);
+      }
+    }
 
-        // Script to replace placeholder name
-        const boyfriendName = "[Boyfriend's Name]"; // <-- Replace with his actual name
-        document.getElementById('boyfriend-name-header').textContent = boyfriendName;
+    // Create constellation effect
+    function createConstellation() {
+      const constellationContainer = document.getElementById('constellation');
+      const points = [];
+      const lineCount = 15;
 
-        // --- Modal Functionality ---
-        const modal = document.getElementById('birthday-modal');
+      // Create random points for constellation
+      for (let i = 0; i < 20; i++) {
+        points.push({
+          x: Math.random() * 100,
+          y: Math.random() * 100
+        });
+      }
 
-        // Function to show the modal
-        function showModal() {
-            modal.classList.add('show');
+      // Create connecting lines between random points
+      for (let i = 0; i < lineCount; i++) {
+        const startPoint = points[Math.floor(Math.random() * points.length)];
+        const endPoint = points[Math.floor(Math.random() * points.length)];
+
+        const dx = endPoint.x - startPoint.x;
+        const dy = endPoint.y - startPoint.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+        const line = document.createElement('div');
+        line.classList.add('constellation-line');
+        line.style.width = `${distance}%`;
+        line.style.top = `${startPoint.y}%`;
+        line.style.left = `${startPoint.x}%`;
+        line.style.transform = `rotate(${angle}deg)`;
+
+        constellationContainer.appendChild(line);
+      }
+    }
+
+    // Create comet effect
+    function createComets() {
+      const cometsContainer = document.getElementById('comets');
+      const cometInterval = setInterval(() => {
+        const comet = document.createElement('div');
+        comet.classList.add('comet');
+
+        // Randomize comet properties
+        const width = Math.random() * 100 + 50;
+        const angle = Math.random() * 20 - 10; // -10 to 10 degrees
+        const offset = Math.random() * 200 - 100; // -100 to 100px vertical offset
+        const duration = Math.random() * 2 + 2; // 2-4 seconds
+
+        comet.style.width = `${width}px`;
+        comet.style.top = `${Math.random() * 50}%`;
+        comet.style.left = '-100px';
+        comet.style.setProperty('--angle', `${angle}deg`);
+        comet.style.setProperty('--offset', `${offset}px`);
+        comet.style.animation = `comet ${duration}s linear forwards`;
+
+        cometsContainer.appendChild(comet);
+
+        // Remove comet after animation completes
+        setTimeout(() => {
+          comet.remove();
+        }, duration * 1000);
+      }, 4000); // New comet every 4 seconds
+    }
+
+    // Interactive magic dust effect
+    function createMagicTrail(x, y) {
+      for (let i = 0; i < 10; i++) {
+        const dust = document.createElement('div');
+        dust.classList.add('magic-dust');
+
+        // Random color from our theme
+        const colors = [
+          'rgba(255, 58, 124, 0.8)',
+          'rgba(123, 44, 191, 0.8)',
+          'rgba(20, 245, 218, 0.8)',
+          'rgba(255, 193, 7, 0.8)'
+        ];
+        dust.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+        // Position at cursor
+        dust.style.left = `${x}px`;
+        dust.style.top = `${y}px`;
+
+        // Random direction and distance
+        const angle = Math.random() * Math.PI * 2;
+        const distance = Math.random() * 100 + 50;
+        const dx = Math.cos(angle) * distance;
+        const dy = Math.sin(angle) * distance;
+
+        dust.style.setProperty('--dx', `${dx}px`);
+        dust.style.setProperty('--dy', `${dy}px`);
+
+        // Animation
+        dust.style.animation = `magic-trail 1s forwards`;
+
+        document.body.appendChild(dust);
+
+        // Remove dust after animation
+        setTimeout(() => {
+          dust.remove();
+        }, 1000);
+      }
+    }
+
+    // Create fireworks for celebration
+    function createFirework(x, y) {
+      const colors = [
+        '#ff3a7c', '#7b2cbf', '#14f5da', '#ffcc00',
+        '#ff85a2', '#a56eff', '#63e6be', '#ffdd33'
+      ];
+
+      const fireworksCount = 30;
+
+      for (let i = 0; i < fireworksCount; i++) {
+        const angle = (Math.PI * 2 * i) / fireworksCount;
+        const distance = 150 + Math.random() * 100;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+
+        const firework = document.createElement('div');
+        firework.classList.add('firework');
+        firework.style.backgroundColor = color;
+
+        // Set animation properties
+        firework.style.setProperty('--x', `${x}px`);
+        firework.style.setProperty('--y', `${y}px`);
+        firework.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
+        firework.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
+        firework.style.setProperty('--color', color);
+
+        firework.style.animation = `firework-explosion 1.5s forwards`;
+
+        document.body.appendChild(firework);
+
+        // Remove the firework element after animation completes
+        setTimeout(() => {
+          firework.remove();
+        }, 1500);
+      }
+    }
+
+    // Countdown Timer logic
+    const countdownDate = new Date("May 24, 2025 00:00:00").getTime();
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = countdownDate - now;
+
+      if (distance < 0) {
+        // Birthday has arrived!
+        clearInterval(countdownInterval);
+        document.getElementById('celebration-container').classList.add('celebration-active');
+        startBirthdayCelebration();
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.querySelector('#days .time-value').textContent = days;
+      document.querySelector('#hours .time-value').textContent = hours;
+      document.querySelector('#minutes .time-value').textContent = minutes;
+      document.querySelector('#seconds .time-value').textContent = seconds;
+
+      // Update the time remaining message based on days
+      const timeRemainingEl = document.getElementById('time-remaining');
+      if (days > 30) {
+        timeRemainingEl.textContent = "Cosmic Journey Begins";
+      } else if (days > 7) {
+        timeRemainingEl.textContent = "Getting Closer";
+      } else if (days > 1) {
+        timeRemainingEl.textContent = "Almost There!";
+      } else if (days === 1) {
+        timeRemainingEl.textContent = "Just One Day!";
+      } else if (hours >= 1) {
+        timeRemainingEl.textContent = "Only Hours Left!";
+      } else {
+        timeRemainingEl.textContent = "Minutes Away!";
+      }
+    }
+
+    // Interactive elements
+    document.addEventListener('mousemove', function (e) {
+      if (Math.random() < 0.1) { // Control the density of magic dust
+        createMagicTrail(e.clientX, e.clientY);
+      }
+    });
+
+    const interactiveButton = document.getElementById('interactive-button');
+    interactiveButton.addEventListener('click', function () {
+      // Create cosmic explosion from button
+      const rect = this.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+
+      createFirework(x, y);
+
+      // Create more fireworks at cosmic positions
+      for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+          const randomX = Math.random() * window.innerWidth;
+          const randomY = Math.random() * (window.innerHeight / 2);
+          createFirework(randomX, randomY);
+        }, i * 300);
+      }
+
+      // Update button text temporarily
+      this.textContent = "✨ Love you  ✨";
+      setTimeout(() => {
+        this.textContent = "Message from Kalu 💌";
+      }, 3000);
+    });
+
+    // Birthday celebration
+    function startBirthdayCelebration() {
+      // Create continuous fireworks
+      setInterval(() => {
+        const randomX = Math.random() * window.innerWidth;
+        const randomY = Math.random() * (window.innerHeight / 2);
+        createFirework(randomX, randomY);
+      }, 800);
+
+      const celebrationButton = document.getElementById('celebration-button');
+      celebrationButton.addEventListener('click', function () {
+        // Create explosion of fireworks
+        for (let i = 0; i < 10; i++) {
+          setTimeout(() => {
+            const randomX = Math.random() * window.innerWidth;
+            const randomY = Math.random() * window.innerHeight;
+            createFirework(randomX, randomY);
+          }, i * 200);
         }
+      });
+    }
 
-        // Function to close the modal
-        function closeModal() {
-            modal.classList.remove('show');
-        }
+    // Initialize all visual elements
+    createStars();
+    createConstellation();
+    createComets();
 
-        // Show the modal when the page loads
-        window.onload = showModal;
+    // Start countdown
+    const countdownInterval = setInterval(updateCountdown, 1000);
+    updateCountdown();
 
-        // --- Countdown Timer Functionality ---
-        // Set the date of his birthday (Year, Month (0-indexed), Day, Hour, Minute, Second)
-        // IMPORTANT: Replace with his actual birthday date and time
-        const birthdayDate = new Date("YYYY-MM-DDTHH:mm:ss").getTime(); // Example: new Date("2025-12-25T00:00:00").getTime();
-
-        // Update the countdown every 1 second
-        const countdownInterval = setInterval(function() {
-
-            // Get the current date and time
-            const now = new Date().getTime();
-
-            // Calculate the distance between now and the birthday date
-            const distance = birthdayDate - now;
-
-            // If the countdown is finished, display a message
-            if (distance < 0) {
-                clearInterval(countdownInterval);
-                document.querySelector(".countdown").innerHTML = "Happy Birthday!";
-                return; // Stop the function here
-            }
-
-            // Time calculations for days, hours, minutes and seconds
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            // Display the result in the respective elements
-            document.getElementById("countdown-days").innerHTML = "<span class='value'>" + days + "</span> Days";
-            document.getElementById("countdown-hours").innerHTML = "<span class='value'>" + hours + "</span> Hours";
-            document.getElementById("countdown-minutes").innerHTML = "<span class='value'>" + minutes + "</span> Minutes";
-            document.getElementById("countdown-seconds").innerHTML = "<span class='value'>" + seconds + "</span> Seconds";
-
-        }, 1000); // Update every 1000 milliseconds (1 second)
-
-    </script>
-
+    // Check if it's already birthday time
+    if (new Date() >= countdownDate) {
+      document.getElementById('celebration-container').classList.add('celebration-active');
+      startBirthdayCelebration();
+    }
+  </script>
 </body>
+
 </html>
