@@ -221,12 +221,15 @@
             color: var(--dark-brown); font-weight: 500; text-shadow: 0 1px 2px var(--light-shadow);
             overflow-wrap: break-word;
         }
-        .epic-text p { /* If you wrap paragraphs inside .epic-text */
+         /* If you wrap paragraphs inside .epic-text for individual animation */
+        .epic-text p {
             opacity: 0; transform: translateY(30px);
             transition: opacity 0.8s ease-out, transform 0.8s ease-out;
         }
         .epic-text p.is-visible { opacity: 1; transform: translateY(0); }
-        .epic-text p.is-visible:nth-child(2) { transition-delay: 0.2s; } /* Example stagger */
+        /* Example stagger if you have multiple p tags in .epic-text:
+        .epic-text p.is-visible:nth-child(2) { transition-delay: 0.2s; }
+        */
 
 
         /* --- Birthday Spectacle --- */
@@ -256,10 +259,7 @@
             transition: opacity 0.7s ease-out, transform 0.7s ease-out;
         }
         .birthday-proclamation.is-visible .proclamation-line { opacity: 1; transform: translateX(0); }
-        .birthday-proclamation.is-visible .proclamation-line:nth-child(1) { transition-delay: 0.2s; }
-        .birthday-proclamation.is-visible .proclamation-line:nth-child(2) { transition-delay: 0.4s; }
-        .birthday-proclamation.is-visible .proclamation-line:nth-child(3) { transition-delay: 0.6s; }
-        .birthday-proclamation.is-visible .proclamation-line:nth-child(4) { transition-delay: 0.8s; }
+        /* JS will handle transition-delay for these lines */
 
         @keyframes proclamationShimmer { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
         @keyframes proclamationPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
@@ -271,7 +271,7 @@
             animation: cakeSpectacle 6s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
             filter: drop-shadow(0 0 35px var(--amber));
         }
-        @keyframes cakeSpectacle { /* (keep existing impressive cake animation) */
+        @keyframes cakeSpectacle {
             0%,100%{transform:scale(1) rotate(0deg);filter:drop-shadow(0 0 30px var(--amber))}25%{transform:scale(1.15) rotate(8deg) translateY(-10px);filter:drop-shadow(0 0 55px var(--royal-gold)) drop-shadow(0 0 20px var(--amber))}50%{transform:scale(1.2) rotate(0deg) translateY(-5px);filter:drop-shadow(0 0 45px var(--crimson)) drop-shadow(0 0 25px var(--royal-gold))}75%{transform:scale(1.15) rotate(-8deg) translateY(-10px);filter:drop-shadow(0 0 55px var(--royal-purple)) drop-shadow(0 0 20px var(--crimson))}
         }
         .cake-subtitle {
@@ -318,7 +318,6 @@
         .photo-artifact.is-visible:nth-child(2) { transition-delay: 0.2s; }
         .photo-artifact.is-visible:nth-child(3) { transition-delay: 0.3s; }
         .photo-artifact.is-visible:nth-child(4) { transition-delay: 0.4s; }
-        /* ... add more if you have more photos ... */
 
         .photo-artifact::before { /* Shimmer effect */
             content: ''; position: absolute; top: -60%; left: -60%; width: 220%; height: 220%;
@@ -404,6 +403,7 @@
             color: var(--royal-gold); text-shadow: 0 0 15px var(--amber), 1px 1px 2px #451A03;
             box-shadow: 0 18px 35px var(--dark-shadow), inset 0 0 25px rgba(255,215,0,0.25), inset 0 0 10px rgba(0,0,0,0.3);
             animation: sealMajesty 4s cubic-bezier(0.68,-0.55,0.265,1.55) infinite; z-index: 5;
+            cursor: pointer; /* Hint it's clickable for the secret */
         }
         @keyframes sealMajesty {0%,100%{transform:scale(1) rotate(0);box-shadow:0 15px 30px var(--dark-shadow),inset 0 0 20px rgba(255,215,0,.2),inset 0 0 10px rgba(0,0,0,.3)}50%{transform:scale(1.12) rotate(6deg) translateY(-5px);box-shadow:0 22px 45px var(--dark-shadow),inset 0 0 35px rgba(255,215,0,.35),inset 0 0 15px rgba(0,0,0,.4),0 0 60px rgba(220,38,38,.35)}}
 
@@ -425,6 +425,159 @@
         .slide-in-right { transform: translateX(60px); }
         .zoom-in { transform: scale(0.8); }
 
+
+        /* --- Secret Letter & Password Modal Styles --- */
+        .secret-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 10, 25, 0.85); /* Darker, thematic overlay */
+            backdrop-filter: blur(5px); /* Frosted glass effect */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001; /* Above everything */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .secret-modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .secret-modal-content {
+            background: var(--parchment);
+            color: var(--dark-brown);
+            padding: clamp(30px, 5vw, 50px);
+            border-radius: 25px;
+            border: 8px solid transparent;
+            border-image: linear-gradient(60deg, var(--deep-gold), var(--royal-gold), var(--amber)) 1 stretch;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 0 25px rgba(255,215,0,0.25);
+            text-align: center;
+            max-width: 550px;
+            width: 90%;
+            position: relative;
+            transform: scale(0.8) translateY(20px);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .secret-modal-overlay.visible .secret-modal-content {
+            transform: scale(1) translateY(0);
+        }
+        .secret-modal-content h2, .secret-modal-content h3 {
+            font-family: 'Uncial Antiqua', cursive;
+            color: var(--royal-purple);
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            font-size: clamp(1.5em, 4vw, 2em);
+        }
+        .secret-modal-content p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            font-size: clamp(0.9em, 2vw, 1.1em);
+        }
+        .secret-modal-content input[type="password"] {
+            width: calc(100% - 40px);
+            padding: 14px 20px;
+            margin-top: 10px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            border: 3px solid var(--medium-brown);
+            background-color: #FEF9E7;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1em;
+            color: var(--dark-brown);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .secret-modal-content input[type="password"]:focus {
+            outline: none;
+            border-color: var(--royal-gold);
+            box-shadow: 0 0 15px var(--amber), inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .secret-modal-content input[type="password"]::placeholder {
+            color: var(--medium-brown);
+            opacity: 0.8;
+        }
+        .secret-modal-content button {
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(145deg, var(--royal-gold), var(--amber));
+            color: var(--dark-brown);
+            border: 2px solid var(--deep-gold);
+            padding: 14px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.25);
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .secret-modal-content button:hover {
+            background: linear-gradient(145deg, var(--amber), var(--royal-gold));
+            box-shadow: 0 7px 18px rgba(0,0,0,0.3);
+            transform: translateY(-3px);
+            border-color: var(--royal-gold);
+        }
+        .secret-modal-content button:active {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        #passwordErrorMsg {
+            color: var(--crimson);
+            margin-top: 15px;
+            font-weight: bold;
+            opacity: 0;
+            /* height: 0; */ /* Let height be auto based on content */
+            max-height: 0; /* Use max-height for transition */
+            overflow: hidden;
+            transition: opacity 0.3s ease, max-height 0.3s ease;
+        }
+        #passwordErrorMsg.visible {
+            opacity: 1;
+            max-height: 5em; /* Or enough to fit the message */
+        }
+        .close-modal-btn {
+            position: absolute;
+            top: clamp(10px, 2vw, 15px);
+            right: clamp(15px, 3vw, 20px);
+            font-size: clamp(2em, 4vw, 2.8em);
+            font-weight: bold;
+            color: var(--medium-brown);
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.3s ease;
+            line-height: 1;
+        }
+        .close-modal-btn:hover {
+            color: var(--dark-brown);
+            transform: rotate(90deg) scale(1.1);
+        }
+        .letter-content {
+            max-width: 750px; /* Letter can be a bit wider */
+            text-align: left;
+        }
+        .letter-body {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 10px 20px 10px 5px; /* Space for scrollbar and breathing room */
+            font-family: 'Cormorant Garamond', serif;
+            scrollbar-width: thin;
+            scrollbar-color: var(--deep-gold) var(--parchment);
+        }
+        .letter-body::-webkit-scrollbar { width: 8px; }
+        .letter-body::-webkit-scrollbar-track { background: var(--parchment); border-radius: 4px; }
+        .letter-body::-webkit-scrollbar-thumb { background-color: var(--deep-gold); border-radius: 4px; border: 2px solid var(--parchment); }
+        .letter-body p { margin-bottom: 20px; font-size: clamp(1em, 2.2vw, 1.2em); line-height: 1.7; }
+        @keyframes shake-input {
+          0%, 100% { transform: translateX(0); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+          20%, 40%, 60%, 80% { transform: translateX(6px); }
+        }
+        .input-error-shake { animation: shake-input 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+
+
         /* --- Responsive Design --- */
         @media (max-width: 768px) {
             .grand-scroll { padding: 30px 20px; margin: 20px 10px; border-radius: 25px; }
@@ -433,7 +586,7 @@
             .mega-illuminated-letter { font-size: clamp(4em, 15vw, 5.5em); padding: 10px 15px 0 0; }
             .epic-text { font-size: clamp(1em, 3.5vw, 1.2em); line-height: 1.8; }
             .photo-gallery-grid { grid-template-columns: 1fr; gap: 30px; }
-            .photo-artifact:hover { transform: perspective(1200px) scale(1.03) translateY(-3px); }
+            .photo-artifact:hover { transform: perspective(1200px) scale(1.03) translateY(-3px); } /* Simpler hover for mobile */
             .realm-title, .birthday-proclamation { font-size: clamp(2em, 8vw, 2.5em); }
             .epic-cake { font-size: clamp(5em, 20vw, 7em); }
             .cake-subtitle { font-size: clamp(1.2em, 4vw, 1.5em); }
@@ -449,6 +602,11 @@
             .epic-text { font-size: 1em; }
             .ornate-corners { font-size: 2em; }
             .scroll-top, .scroll-bottom { width: 120px; height: 30px; }
+            .secret-modal-content { padding: 20px; }
+            .secret-modal-content h2, .secret-modal-content h3 { font-size: 1.3em; }
+            .secret-modal-content p { font-size: 0.9em; }
+            .secret-modal-content input[type="password"], .secret-modal-content button { font-size: 1em; padding: 10px 15px;}
+            .close-modal-btn { font-size: 1.8em; top: 8px; right: 12px;}
         }
     </style>
 </head>
@@ -483,18 +641,15 @@
 
                 <div class="illuminated-section">
                     <span class="mega-illuminated-letter animate-on-scroll slide-in-left">B</span>
-                    <div class="epic-text animate-on-scroll fade-in-up" style="transition-delay: 0.3s;">
-                        <p class="animate-on-scroll fade-in-up">ehold! On this most magnificent day, the stars align and the heavens rejoice, for we celebrate the birth of the legendary Sir Ishan! A knight whose valor surpasses the mightiest warriors, whose wisdom rivals the ancient sages, and whose heart burns brighter than a thousand suns. Let the kingdom ring with celebration, let the dragons bow in respect, and let this day be remembered in the annals of history as the day joy conquered all!</p>
+                    <div class="epic-text"> <p class="animate-on-scroll fade-in-up" style="transition-delay: 0.3s;">ehold! On this most magnificent day, the stars align and the heavens rejoice, for we celebrate the birth of the legendary Sir Ishan! A knight whose valor surpasses the mightiest warriors, whose wisdom rivals the ancient sages, and whose heart burns brighter than a thousand suns. Let the kingdom ring with celebration, let the dragons bow in respect, and let this day be remembered in the annals of history as the day joy conquered all!</p>
                     </div>
                 </div>
 
                 <div class="section-divider animate-on-scroll"></div>
 
                 <div class="birthday-spectacle">
-                    <div class="birthday-proclamation animate-on-scroll">
-                        <span class="proclamation-line">🏰 MAY YOUR BIRTHDAY BE A LEGENDARY QUEST 🏰</span>
-                        <span class="proclamation-line" style="font-size: 0.8em; margin-top:10px;"> <br></span>
-                        <span class="proclamation-line">Where every moment sparkles like enchanted gold,</span>
+                    <div class="birthday-proclamation animate-on-scroll"> <span class="proclamation-line">🏰 MAY YOUR BIRTHDAY BE A LEGENDARY QUEST 🏰</span>
+                        <span class="proclamation-line" style="font-size: 0.01em; display:block; margin: 5px 0;"></span> <span class="proclamation-line">Where every moment sparkles like enchanted gold,</span>
                         <span class="proclamation-line">Every laugh echoes through castle halls,</span>
                         <span class="proclamation-line">And every wish becomes a magical reality!</span>
                     </div>
@@ -561,64 +716,171 @@
                     <em>On this day of celestial celebration</em>
                 </div>
 
-                <div class="imperial-seal animate-on-scroll zoom-in" style="transition-delay: 0.5s;">I</div>
+                <div id="secretTriggerSeal" class="imperial-seal animate-on-scroll zoom-in" style="transition-delay: 0.5s;" title="Unlock a Secret Message...">S</div>
 
+            </div> </div> </div> <div id="passwordModal" class="secret-modal-overlay">
+        <div class="secret-modal-content">
+            <span class="close-modal-btn" id="closePasswordModalBtn">&times;</span>
+            <h2>A Secret Awaits Thee</h2>
+            <p>Whisper the sacred word known only to the closest of allies to unveil a hidden message.</p>
+            <input type="password" id="secretPasswordInput" placeholder="The Magic Word...">
+            <button id="submitPasswordBtn">Unlock Scroll</button>
+            <p id="passwordErrorMsg">Incorrect word. The spirits remain silent.</p>
+        </div>
+    </div>
+
+    <div id="secretLetterModal" class="secret-modal-overlay">
+        <div class="secret-modal-content letter-content">
+            <span class="close-modal-btn" id="closeLetterModalBtn">&times;</span>
+            <h3>A Scroll Sealed with Affection</h3>
+            <div class="letter-body">
+                <p>My Dearest Sir Ishan,</p>
+                <p>Beyond the grand tales and public proclamations, this message is for your eyes alone. As the stars celebrate your day, know that...</p>
+                
+                <p style="font-style: italic; margin-top: 20px; margin-bottom: 20px;">
+                    (Here, my love, you shall pen your most heartfelt words, secrets, or wishes that only he should read. Make it personal and from the heart! Perhaps a cherished memory, a future dream, or just how much he means to you.)
+                </p>
+                
+                <p>May your path always be illuminated with joy, your heart filled with courage, and your life a tapestry of wondrous adventures.</p>
+                <p>With all my love, today and always,</p>
+                <p style="font-family: 'Dancing Script', cursive; font-size: 1.5em; color: var(--royal-purple); text-align: right; margin-top: 30px;">Your Most Devoted Chronicler (and Admirer!)</p>
             </div>
         </div>
     </div>
 
+
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script>
+        // --- Loading Screen Logic ---
         window.addEventListener('load', () => {
             const loadingScreen = document.getElementById('loadingScreen');
             setTimeout(() => {
                 loadingScreen.classList.add('hidden');
-            }, 3500);
+            }, 3500); // Duration of loading bar + a little buffer
         });
 
+        // --- Particles.js Configuration ---
         particlesJS("particles-js", {"particles":{"number":{"value":60,"density":{"enable":true,"value_area":800}},"color":{"value":["#FFD700","#F59E0B","#B8860B"]},"shape":{"type":"circle","stroke":{"width":0,"color":"#000000"},"polygon":{"nb_sides":5}},"opacity":{"value":0.6,"random":true,"anim":{"enable":true,"speed":0.8,"opacity_min":0.1,"sync":false}},"size":{"value":3,"random":true,"anim":{"enable":true,"speed":3,"size_min":0.5,"sync":false}},"line_linked":{"enable":false},"move":{"enable":true,"speed":1.5,"direction":"none","random":true,"straight":false,"out_mode":"out","bounce":false,"attract":{"enable":false,"rotateX":600,"rotateY":1200}}},"interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":true,"mode":"grab"},"onclick":{"enable":true,"mode":"push"},"resize":true},"modes":{"grab":{"distance":100,"line_opacity":0.3},"bubble":{"distance":200,"size":5,"duration":2,"opacity":0.8,"speed":3},"repulse":{"distance":150,"duration":0.4},"push":{"particles_nb":4},"remove":{"particles_nb":2}}},"retina_detect":true});
 
-        // Scroll-triggered animations
+        // --- Scroll-Triggered Animations Logic ---
         const scrollAnimatedElements = document.querySelectorAll('.animate-on-scroll');
-
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible');
-                     // Optional: unobserve after animation if it only runs once and not on re-scroll up/down
-                    // observer.unobserve(entry.target);
+                    // Optional: unobserve after animation if it only runs once
+                    // observer.unobserve(entry.target); 
                 } else {
-                    // Optional: remove class if you want animation to re-trigger
+                    // Optional: remove class if you want animation to re-trigger on scroll out and back in
                     // entry.target.classList.remove('is-visible');
                 }
             });
         }, {
-            threshold: 0.1 // Adjust threshold as needed (0.1 means 10% of element is visible)
+            threshold: 0.1 // Trigger when 10% of the element is visible (adjust as needed)
         });
-
         scrollAnimatedElements.forEach(element => {
             observer.observe(element);
         });
 
         // Stagger lines in birthday proclamation
-        const proclamation = document.querySelector('.birthday-proclamation');
-        if (proclamation) { // Check if element exists
+        const proclamationEl = document.querySelector('.birthday-proclamation');
+        if (proclamationEl) {
             const proclamationObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
+                        entry.target.classList.add('is-visible'); // Add to parent for overall visibility if needed
                         const lines = entry.target.querySelectorAll('.proclamation-line');
                         lines.forEach((line, index) => {
-                            line.style.transitionDelay = `${index * 0.2 + 0.2}s`; // Base delay + stagger
+                            line.style.transitionDelay = `${index * 0.25 + 0.2}s`; // Base delay + stagger
                         });
                         proclamationObserver.unobserve(entry.target); // Animate only once
                     }
                 });
-            }, { threshold: 0.5 });
-            proclamationObserver.observe(proclamation);
+            }, { threshold: 0.4 }); // Trigger when 40% of proclamation is visible
+            proclamationObserver.observe(proclamationEl);
         }
 
+        // --- Secret Letter Logic ---
+        const imperialSealTriggerEl = document.getElementById('secretTriggerSeal');
+        const passwordModalEl = document.getElementById('passwordModal');
+        const secretLetterModalEl = document.getElementById('secretLetterModal');
+        const passwordInputEl = document.getElementById('secretPasswordInput');
+        const submitPasswordBtnEl = document.getElementById('submitPasswordBtn');
+        const closePasswordModalBtnEl = document.getElementById('closePasswordModalBtn');
+        const closeLetterModalBtnEl = document.getElementById('closeLetterModalBtn');
+        const passwordErrorMsgEl = document.getElementById('passwordErrorMsg');
 
+        // !!! IMPORTANT: Change this to your desired secret password !!!
+        const THE_SECRET_WORD = "SirIshanMyKing"; // Example: Make it personal and memorable!
+
+        if (imperialSealTriggerEl) {
+            // imperialSealTriggerEl.style.cursor = 'pointer'; // Already set in CSS
+            // imperialSealTriggerEl.title = "Unlock a Secret Message..."; // Already set in HTML
+            imperialSealTriggerEl.addEventListener('click', () => {
+                passwordModalEl.classList.add('visible');
+                passwordInputEl.focus();
+                passwordErrorMsgEl.classList.remove('visible');
+                passwordInputEl.classList.remove('input-error-shake');
+            });
+        }
+
+        if(closePasswordModalBtnEl) {
+            closePasswordModalBtnEl.addEventListener('click', () => {
+                passwordModalEl.classList.remove('visible');
+                passwordInputEl.value = '';
+            });
+        }
+
+        if(closeLetterModalBtnEl) {
+            closeLetterModalBtnEl.addEventListener('click', () => {
+                secretLetterModalEl.classList.remove('visible');
+            });
+        }
+        
+        if(submitPasswordBtnEl) {
+            submitPasswordBtnEl.addEventListener('click', checkPassword);
+        }
+        if(passwordInputEl) {
+            passwordInputEl.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    checkPassword();
+                }
+            });
+        }
+
+        function checkPassword() {
+            const enteredPassword = passwordInputEl.value;
+            passwordInputEl.classList.remove('input-error-shake');
+
+            if (enteredPassword === THE_SECRET_WORD) {
+                passwordModalEl.classList.remove('visible');
+                secretLetterModalEl.classList.add('visible');
+                passwordInputEl.value = ''; 
+                passwordErrorMsgEl.classList.remove('visible');
+            } else {
+                passwordErrorMsgEl.classList.add('visible');
+                passwordInputEl.classList.add('input-error-shake');
+                passwordInputEl.value = ''; 
+                passwordInputEl.focus();
+            }
+        }
+
+        // Close modals if user clicks on the overlay background
+        [passwordModalEl, secretLetterModalEl].forEach(modal => {
+            if(modal) {
+                modal.addEventListener('click', function(event) {
+                    if (event.target === this) { 
+                        this.classList.remove('visible');
+                        if (this === passwordModalEl) {
+                            passwordInputEl.value = '';
+                            passwordErrorMsgEl.classList.remove('visible');
+                            passwordInputEl.classList.remove('input-error-shake');
+                        }
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
