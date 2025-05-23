@@ -1,918 +1,1068 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Birthday Countdown</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
-
-    :root {
-      --primary-color: #ff3a7c;
-      --secondary-color: #7b2cbf;
-      --accent-color: #14f5da;
-      --bg-color: #0d0221;
-      --text-color: #ffffff;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      min-height: 100vh;
-      overflow: hidden;
-      perspective: 1000px;
-    }
-
-    .universe {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: radial-gradient(ellipse at bottom, #1a0941 0%, #000000 100%);
-      z-index: -2;
-    }
-
-    .stars {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-    }
-
-    .star {
-      position: absolute;
-      background-color: #ffffff;
-      border-radius: 50%;
-    }
-
-    .constellation {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-
-    .constellation-line {
-      position: absolute;
-      background: linear-gradient(90deg, var(--accent-color), transparent);
-      height: 1px;
-      transform-origin: left center;
-      opacity: 0.3;
-      box-shadow: 0 0 5px var(--accent-color);
-    }
-
-    .cosmic-spiral {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      z-index: -1;
-      opacity: 0.1;
-      background: conic-gradient(from 0deg at 50% 50%,
-          var(--primary-color),
-          var(--secondary-color),
-          var(--accent-color),
-          var(--primary-color));
-      filter: blur(30px);
-      animation: rotate 60s linear infinite;
-    }
-
-    @keyframes rotate {
-      from {
-        transform: rotate(0deg);
-      }
-
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .main-container {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 2rem;
-      z-index: 1;
-    }
-
-    .countdown-container {
-      position: relative;
-      margin-bottom: 4rem;
-      transform-style: preserve-3d;
-      animation: float 6s ease-in-out infinite;
-    }
-
-    @keyframes float {
-
-      0%,
-      100% {
-        transform: translateY(0) rotate(0deg);
-      }
-
-      50% {
-        transform: translateY(-20px) rotate(2deg);
-      }
-    }
-
-    .time-orbit {
-      position: relative;
-      width: 500px;
-      height: 500px;
-      border-radius: 50%;
-      background: rgba(123, 44, 191, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transform-style: preserve-3d;
-      animation: pulse 8s ease-in-out infinite alternate;
-    }
-
-    .inner-circle {
-      position: absolute;
-      width: 70%;
-      height: 70%;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: radial-gradient(circle at center, rgba(20, 245, 218, 0.1), transparent 70%);
-    }
-
-    .core {
-      position: absolute;
-      width: 40%;
-      height: 40%;
-      border-radius: 50%;
-      background: radial-gradient(circle at center, rgba(255, 58, 124, 0.2), transparent 70%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      text-align: center;
-      animation: glow 3s ease-in-out infinite alternate;
-    }
-
-    @keyframes glow {
-      0% {
-        box-shadow: 0 0 20px rgba(255, 58, 124, 0.3);
-      }
-
-      100% {
-        box-shadow: 0 0 50px rgba(255, 58, 124, 0.6);
-      }
-    }
-
-    .time-unit {
-      position: absolute;
-      width: 90px;
-      height: 90px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: rgba(13, 2, 33, 0.6);
-      backdrop-filter: blur(10px);
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 0 20px rgba(123, 44, 191, 0.4);
-      color: var(--text-color);
-      transform-style: preserve-3d;
-    }
-
-    #days {
-      transform: translateX(200px);
-      background: linear-gradient(135deg, rgba(255, 58, 124, 0.3), rgba(13, 2, 33, 0.8));
-    }
-
-    #hours {
-      transform: translateY(-200px);
-      background: linear-gradient(135deg, rgba(123, 44, 191, 0.3), rgba(13, 2, 33, 0.8));
-    }
-
-    #minutes {
-      transform: translateX(-200px);
-      background: linear-gradient(135deg, rgba(20, 245, 218, 0.3), rgba(13, 2, 33, 0.8));
-    }
-
-    #seconds {
-      transform: translateY(200px);
-      background: linear-gradient(135deg, rgba(255, 193, 7, 0.3), rgba(13, 2, 33, 0.8));
-      animation: pulse-seconds 1s linear infinite;
-    }
-
-    @keyframes pulse-seconds {
-
-      0%,
-      100% {
-        box-shadow: 0 0 20px rgba(255, 193, 7, 0.4);
-      }
-
-      50% {
-        box-shadow: 0 0 30px rgba(255, 193, 7, 0.7);
-      }
-    }
-
-    .time-value {
-      font-size: 2rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-
-    .time-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      opacity: 0.8;
-    }
-
-    .orbital-path {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 1px dashed rgba(255, 255, 255, 0.2);
-      animation: rotate-orbit 60s linear infinite;
-    }
-
-    @keyframes rotate-orbit {
-      from {
-        transform: rotate(0deg);
-      }
-
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .title {
-      font-family: 'Playfair Display', serif;
-      font-size: 3.5rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      text-align: center;
-      color: transparent;
-      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
-      -webkit-background-clip: text;
-      background-clip: text;
-      animation: title-shimmer 5s linear infinite;
-      text-shadow: 0 0 10px rgba(255, 58, 124, 0.5);
-    }
-
-    @keyframes title-shimmer {
-      0% {
-        background-position: 0% 50%;
-      }
-
-      100% {
-        background-position: 100% 50%;
-      }
-    }
-
-    .message {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 300;
-      font-size: 1.2rem;
-      max-width: 600px;
-      text-align: center;
-      line-height: 1.6;
-      margin-bottom: 3rem;
-      opacity: 0.9;
-      position: relative;
-    }
-
-    .message::after {
-      content: '';
-      position: absolute;
-      bottom: -15px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
-    }
-
-    .time-remaining {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      margin-top: 2rem;
-      opacity: 0.8;
-      text-align: center;
-    }
-
-    .interactive-button {
-      margin-top: 2rem;
-      padding: 1rem 2.5rem;
-      font-family: 'Poppins', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 50px;
-      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-      color: white;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 20px rgba(255, 58, 124, 0.4);
-      z-index: 1;
-    }
-
-    .interactive-button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transition: all 0.5s ease;
-      z-index: -1;
-    }
-
-    .interactive-button:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(255, 58, 124, 0.6);
-    }
-
-    .interactive-button:hover::before {
-      left: 100%;
-    }
-
-    .signature {
-      position: absolute;
-      bottom: 2rem;
-      font-size: 0.9rem;
-      opacity: 0.7;
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-    }
-
-    .magic-dust {
-      position: absolute;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 10;
-      opacity: 0;
-    }
-
-    @keyframes magic-trail {
-      0% {
-        opacity: 1;
-        transform: translate(0, 0) scale(1);
-      }
-
-      100% {
-        opacity: 0;
-        transform: translate(var(--dx), var(--dy)) scale(0);
-      }
-    }
-
-    .comets {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      overflow: hidden;
-      z-index: -1;
-    }
-
-    .comet {
-      position: absolute;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent-color), white);
-      opacity: 0;
-      transform-origin: left center;
-      z-index: -1;
-    }
-
-    @keyframes comet {
-      0% {
-        opacity: 0;
-        transform: translateX(-100%) translateY(0) rotate(var(--angle));
-      }
-
-      10% {
-        opacity: 1;
-      }
-
-      80% {
-        opacity: 1;
-      }
-
-      100% {
-        opacity: 0;
-        transform: translateX(200%) translateY(var(--offset)) rotate(var(--angle));
-      }
-    }
-
-    @media (max-width: 768px) {
-      .title {
-        font-size: 2.5rem;
-      }
-
-      .time-orbit {
-        width: 300px;
-        height: 300px;
-      }
-
-      .time-unit {
-        width: 70px;
-        height: 70px;
-      }
-
-      #days {
-        transform: translateX(120px);
-      }
-
-      #hours {
-        transform: translateY(-120px);
-      }
-
-      #minutes {
-        transform: translateX(-120px);
-      }
-
-      #seconds {
-        transform: translateY(120px);
-      }
-
-      .time-value {
-        font-size: 1.5rem;
-      }
-
-      .time-label {
-        font-size: 0.6rem;
-      }
-    }
-
-    .celebration-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(ellipse at bottom, #1a0941 0%, #000000 100%);
-      z-index: 100;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 1s ease;
-    }
-
-    .celebration-active {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .celebration-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 5rem;
-      font-weight: 700;
-      margin-bottom: 2rem;
-      text-align: center;
-      color: transparent;
-      background: linear-gradient(90deg, #ff3a7c, #ffcc00, #14f5da, #7b2cbf, #ff3a7c);
-      background-size: 400% 100%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      animation: rainbow-text 10s linear infinite;
-      text-shadow: 0 0 20px rgba(255, 58, 124, 0.7);
-    }
-
-    @keyframes rainbow-text {
-      0% {
-        background-position: 0% 50%;
-      }
-
-      100% {
-        background-position: 400% 50%;
-      }
-    }
-
-    .celebration-message {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 300;
-      font-size: 1.5rem;
-      max-width: 800px;
-      text-align: center;
-      line-height: 1.8;
-      margin-bottom: 3rem;
-    }
-
-    .firework {
-      position: absolute;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      box-shadow: 0 0 10px 2px #fff;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    @keyframes firework-explosion {
-      0% {
-        transform: translate(var(--x), var(--y));
-        width: 5px;
-        height: 5px;
-        opacity: 1;
-        box-shadow: 0 0 10px 2px #fff;
-      }
-
-      50% {
-        opacity: 1;
-      }
-
-      100% {
-        transform: translate(calc(var(--x) + var(--dx)),
-            calc(var(--y) + var(--dy)));
-        width: 0;
-        height: 0;
-        opacity: 0;
-        box-shadow: 0 0 20px 4px var(--color);
-      }
-    }
-
-    .celebration-button {
-      margin-top: 3rem;
-      padding: 1.5rem 3rem;
-      font-family: 'Poppins', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 50px;
-      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color));
-      background-size: 200% 100%;
-      color: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 30px rgba(255, 58, 124, 0.6);
-      animation: button-shimmer 3s linear infinite;
-    }
-
-    @keyframes button-shimmer {
-      0% {
-        background-position: 0% 50%;
-      }
-
-      100% {
-        background-position: 200% 50%;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Grand Chronicle of Sir Ishan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Uncial+Antiqua&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --royal-gold: #FFD700;
+            --deep-gold: #B8860B;
+            --royal-purple: #6B46C1;
+            --crimson: #DC2626;
+            --emerald: #059669;
+            --amber: #F59E0B;
+            --parchment: #FEF3C7;
+            --dark-brown: #451A03;
+            --medium-brown: #92400E;
+            --light-shadow: rgba(0,0,0,0.1);
+            --medium-shadow: rgba(0,0,0,0.3);
+            --dark-shadow: rgba(0,0,0,0.5);
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(107, 70, 193, 0.2) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(220, 38, 38, 0.2) 0%, transparent 60%),
+                radial-gradient(ellipse at 40% 80%, rgba(5, 150, 105, 0.2) 0%, transparent 60%),
+                linear-gradient(135deg, #0F0A19 0%, #1E1B4B 25%, #312E81 50%, #1E1B4B 75%, #0F0A19 100%);
+            background-size: 400% 400%;
+            animation: cosmicShift 25s ease-in-out infinite;
+            color: #1F2937; /* Default text color for body, might be overridden */
+            overflow-x: hidden;
+            min-height: 100vh;
+            transition: background-color 0.5s ease; /* For smooth theme changes if any */
+        }
+
+        @keyframes cosmicShift {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 0%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #121032, #242064, #422f8a); /* Darker, richer gradient */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 1s cubic-bezier(0.77, 0, 0.175, 1), visibility 1s cubic-bezier(0.77, 0, 0.175, 1); /* Smoother fade */
+        }
+
+        .loading-screen.hidden { /* Class to trigger fade out */
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: var(--royal-gold);
+        }
+
+        .loading-title {
+            font-family: 'Uncial Antiqua', cursive;
+            font-size: clamp(2.5em, 6vw, 3.5em); /* Responsive font size */
+            margin-bottom: 25px;
+            animation: titlePulse 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); text-shadow: 0 0 15px var(--royal-gold), 0 0 25px var(--amber); }
+            50% { transform: scale(1.03); text-shadow: 0 0 30px var(--royal-gold), 0 0 50px var(--amber), 0 0 70px var(--royal-gold); }
+        }
+
+        .loading-bar {
+            width: clamp(250px, 60vw, 350px); /* Responsive width */
+            height: 6px; /* Slightly thicker */
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 30px auto;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--royal-gold), var(--amber), var(--royal-gold));
+            background-size: 200% 100%; /* For a shimmer effect on the bar */
+            width: 0%;
+            border-radius: 3px;
+            animation: loadingProgress 3.5s cubic-bezier(0.645, 0.045, 0.355, 1) forwards, loadingShimmer 1.5s linear infinite;
+        }
+
+        @keyframes loadingProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        @keyframes loadingShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+
+        /* Magical Particles Background - JavaScript will handle this */
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0; /* Behind content but above body bg */
+        }
+
+
+        /* Grand Scroll Container */
+        .grand-container {
+            perspective: 2500px; /* Increased for more dramatic 3D effect */
+            padding: clamp(50px, 10vh, 100px) 20px; /* Responsive padding */
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .scroll-wrapper {
+            transform-style: preserve-3d;
+            animation: scrollReveal 3.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; /* Smoother easing */
+            animation-delay: 3s; /* Delay to start after loading screen */
+            opacity: 0; /* Start hidden until animation begins */
+        }
+        @keyframes scrollReveal {
+            0% {
+                transform: rotateX(-95deg) translateZ(-700px) translateY(100px);
+                opacity: 0;
+            }
+            100% {
+                transform: rotateX(0deg) translateZ(0px) translateY(0px);
+                opacity: 1;
+            }
+        }
+
+
+        .grand-scroll {
+            background:
+                radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 215, 0, 0.15), transparent),
+                radial-gradient(ellipse 80% 50% at 50% 100%, rgba(255, 215, 0, 0.15), transparent),
+                linear-gradient(135deg,
+                    #FEF3C7 0%,
+                    #FDF0BB 10%,
+                    #FEF3C7 20%,
+                    #FCE59A 30%,
+                    #FEF3C7 40%,
+                    #FDF0BB 50%,
+                    #FEF3C7 60%,
+                    #FCE59A 70%,
+                    #FEF3C7 80%,
+                    #FDF0BB 90%,
+                    #FEF3C7 100%);
+            background-size: 100% 100%;
+            border: 10px solid transparent; /* Slightly thicker border */
+            border-image: linear-gradient(45deg, var(--royal-gold), var(--deep-gold), var(--amber), var(--royal-gold)) 1 stretch;
+            border-radius: 35px; /* Softer radius */
+            padding: clamp(40px, 8vw, 80px) clamp(30px, 7vw, 100px); /* Responsive padding */
+            position: relative;
+            box-shadow:
+                inset 0 0 120px rgba(255, 215, 0, 0.25), /* Enhanced inset glow */
+                0 40px 100px var(--medium-shadow),
+                0 0 250px rgba(255, 215, 0, 0.15);
+            overflow: hidden; /* Important for pseudo-elements and border-radius */
+            animation: scrollGlow 7s ease-in-out infinite alternate;
+        }
+
+        @keyframes scrollGlow {
+            0% {
+                box-shadow:
+                    inset 0 0 100px rgba(255, 215, 0, 0.2),
+                    0 30px 80px var(--medium-shadow),
+                    0 0 200px rgba(255, 215, 0, 0.1);
+                 border-image-source: linear-gradient(45deg, var(--royal-gold), var(--deep-gold), var(--amber), var(--royal-gold));
+            }
+            100% {
+                box-shadow:
+                    inset 0 0 140px rgba(255, 215, 0, 0.35), /* More intense glow */
+                    0 50px 120px var(--dark-shadow), /* Deeper shadow */
+                    0 0 350px rgba(255, 215, 0, 0.25);
+                 border-image-source: linear-gradient(45deg, var(--amber), var(--royal-gold), var(--deep-gold), var(--amber));
+            }
+        }
+
+        /* Ornate Decorative Elements */
+        .scroll-top, .scroll-bottom {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: clamp(150px, 30vw, 220px); /* Responsive width */
+            height: 40px;
+            background: linear-gradient(90deg, var(--medium-brown), var(--dark-brown), var(--medium-brown));
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--medium-shadow);
+            z-index: 10;
+        }
+
+        .scroll-top {
+            top: -20px;
+            animation: scrollRodFloat 6s ease-in-out infinite;
+        }
+
+        .scroll-bottom {
+            bottom: -20px;
+            animation: scrollRodFloat 6s ease-in-out infinite reverse;
+        }
+
+        @keyframes scrollRodFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0px) scale(1); }
+            50% { transform: translateX(-50%) translateY(-6px) scale(1.03); }
+        }
+
+        .ornate-corners {
+            position: absolute;
+            font-size: clamp(2.5em, 5vw, 3.5em);
+            color: var(--royal-gold);
+            text-shadow: 0 0 20px var(--amber), 0 0 30px var(--royal-gold);
+            animation: cornerPulse 4s ease-in-out infinite;
+            opacity: 0.8;
+        }
+
+        .corner-tl { top: 15px; left: 15px; }
+        .corner-tr { top: 15px; right: 15px; transform: scaleX(-1);} /* Mirrored */
+        .corner-bl { bottom: 15px; left: 15px; transform: scaleY(-1);} /* Mirrored */
+        .corner-br { bottom: 15px; right: 15px; transform: scale(-1,-1);} /* Mirrored */
+
+        @keyframes cornerPulse {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+            50% { transform: scale(1.1) rotate(5deg); opacity: 1; }
+        }
+
+        /* Majestic Header */
+        .grand-header {
+            text-align: center;
+            margin-bottom: clamp(40px, 8vh, 70px);
+            position: relative;
+        }
+
+        .royal-crown {
+            font-size: clamp(3.5em, 7vw, 4.5em);
+            margin-bottom: 25px;
+            display: inline-block; /* Changed from block to inline-block for better centering if needed */
+            animation: crownFloat 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 25px var(--royal-gold));
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Bouncy hover */
+        }
+        .royal-crown:hover {
+            transform: translateY(-12px) rotate(8deg) scale(1.1);
+        }
+
+
+        @keyframes crownFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(3deg); }
+        }
+
+        .majestic-title {
+            font-family: 'Uncial Antiqua', cursive;
+            font-size: clamp(2.8em, 7vw, 5.5em); /* Slightly adjusted for balance */
+            background: linear-gradient(135deg, var(--royal-gold), var(--amber), var(--deep-gold), var(--royal-gold));
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; /* Fallback */
+            animation: textShimmer 5s ease-in-out infinite;
+            margin-bottom: 25px;
+            letter-spacing: 4px;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 0 0 50px rgba(255,223,100,0.4); /* Enhanced shadow */
+        }
+
+        @keyframes textShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .grand-subtitle {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.8em, 4vw, 2.5em);
+            color: var(--royal-purple);
+            font-weight: 600;
+            margin-bottom: 40px;
+            letter-spacing: 3px;
+            text-shadow: 0 2px 10px rgba(107, 70, 193, 0.3);
+            animation: subtitleGlow 3.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes subtitleGlow {
+            0% { text-shadow: 0 2px 10px rgba(107, 70, 193, 0.3), 0 0 5px rgba(107,70,193,0.1); }
+            100% { text-shadow: 0 4px 20px rgba(107, 70, 193, 0.6), 0 0 40px rgba(107, 70, 193, 0.3), 0 0 10px var(--royal-purple); }
+        }
+
+        /* Epic Content Sections */
+        .illuminated-section {
+            margin: clamp(40px, 8vh, 70px) 0;
+            position: relative;
+            overflow: hidden; /* For clearing float */
+            padding-bottom: 20px; /* Space for potential descenders of last line */
+        }
+
+        .section-divider {
+            height: 2px;
+            width: 80%;
+            background: linear-gradient(90deg, transparent, var(--deep-gold), transparent);
+            margin: 60px auto;
+            opacity: 0.6;
+            border-radius: 1px;
+        }
+
+
+        .mega-illuminated-letter {
+            float: left;
+            font-family: 'Uncial Antiqua', cursive;
+            font-size: clamp(6em, 12vw, 9em);
+            line-height: 0.85; /* Adjusted for better flow */
+            padding: 15px 25px 0 0; /* Adjusted padding */
+            background: linear-gradient(135deg, var(--crimson), var(--royal-purple), var(--emerald), var(--crimson));
+            background-size: 200% 200%; /* For animation */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; /* Fallback */
+            text-shadow: 0 0 20px rgba(220, 38, 38, 0.2), 0 0 30px rgba(107, 70, 193, 0.2), 0 0 40px rgba(5, 150, 105, 0.2);
+            margin-top: 15px;
+            animation: letterPulse 5s ease-in-out infinite, letterGradientShift 8s ease-in-out infinite;
+            transition: transform 0.3s ease-out;
+        }
+        .mega-illuminated-letter:hover {
+            transform: scale(1.08) rotate(2deg);
+        }
+
+        @keyframes letterPulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.05) rotate(-1deg); }
+        }
+        @keyframes letterGradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .epic-text {
+            font-size: clamp(1.2em, 2.5vw, 1.6em); /* Responsive font size */
+            line-height: 1.9; /* Slightly adjusted */
+            text-align: justify;
+            color: var(--dark-brown);
+            font-weight: 500;
+            text-shadow: 0 1px 2px var(--light-shadow);
+            overflow-wrap: break-word; /* Ensure long words break */
+        }
+        .epic-text::first-line {
+            font-weight: 600; /* Make first line slightly bolder */
+        }
+
+
+        /* Spectacular Photo Gallery */
+        .photo-realm {
+            margin: clamp(60px, 10vh, 90px) 0;
+            text-align: center;
+        }
+
+        .realm-title {
+            font-family: 'Uncial Antiqua', cursive;
+            font-size: clamp(2.8em, 6vw, 4em);
+            background: linear-gradient(135deg, var(--emerald), var(--royal-purple), var(--crimson), var(--emerald));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 50px;
+            text-shadow: 0 0 30px rgba(5, 150, 105, 0.4);
+            animation: realmTitleShimmer 6s ease-in-out infinite;
+        }
+        @keyframes realmTitleShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .photo-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(clamp(280px, 90%, 320px), 1fr)); /* Responsive columns */
+            gap: clamp(30px, 5vw, 50px); /* Responsive gap */
+            margin: 50px 0;
+        }
+
+        .photo-artifact {
+            background: linear-gradient(145deg, var(--medium-brown), var(--dark-brown)); /* Slightly changed angle */
+            padding: 20px; /* Adjusted padding */
+            border-radius: 25px; /* Softer radius */
+            transform: perspective(1200px) rotateY(0deg);
+            transition: all 0.6s cubic-bezier(0.215, 0.610, 0.355, 1); /* Smoother transition */
+            box-shadow:
+                0 25px 50px var(--medium-shadow),
+                inset 0 0 35px rgba(255, 215, 0, 0.15),
+                0 0 10px rgba(0,0,0,0.2); /* Added subtle base shadow */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-artifact::before { /* Shimmer effect */
+            content: '';
+            position: absolute;
+            top: -60%; /* Adjusted for wider sweep */
+            left: -60%;
+            width: 220%;
+            height: 220%;
+            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.15), transparent, rgba(255,215,0,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.8s cubic-bezier(0.23, 1, 0.320, 1);
+            opacity: 0;
+            pointer-events: none; /* Important for hover */
+        }
+
+        .photo-artifact:hover {
+            transform: perspective(1200px) rotateY(8deg) scale(1.06) translateY(-5px); /* More pronounced hover */
+            box-shadow:
+                0 35px 70px var(--dark-shadow),
+                inset 0 0 60px rgba(255, 215, 0, 0.25);
+        }
+
+        .photo-artifact:hover::before {
+            opacity: 1;
+            transform: rotate(45deg) translate(20%, 20%); /* Adjusted translate for a better sweep */
+        }
+
+        .photo-canvas {
+            background: linear-gradient(135deg, var(--parchment), #FDF0BB);
+            height: 250px;
+            border-radius: 18px; /* Softer */
+            display: flex;
+            flex-direction: column; /* Stack icon and text */
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.2em, 2vw, 1.4em);
+            color: var(--dark-brown);
+            text-align: center;
+            margin-bottom: 20px;
+            border: 3px dashed var(--deep-gold);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-canvas:hover {
+            border-color: var(--royal-gold);
+            border-style: solid; /* Change to solid on hover */
+            box-shadow: 0 0 35px rgba(255, 215, 0, 0.35), inset 0 0 20px rgba(255,215,0,0.1);
+            background: linear-gradient(135deg, #FEF9E7, var(--parchment)); /* Lighter on hover */
+        }
+
+        .photo-canvas .canvas-icon { /* Replaced ::before for more control */
+            font-size: clamp(3em, 6vw, 4em);
+            display: block;
+            margin-bottom: 15px;
+            animation: cameraFloat 3s ease-in-out infinite;
+            color: var(--deep-gold);
+            transition: color 0.3s ease;
+        }
+        .photo-canvas:hover .canvas-icon {
+            color: var(--royal-gold);
+        }
+
+
+        @keyframes cameraFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(3deg); }
+        }
+
+        .artifact-label {
+            color: var(--parchment);
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.1em, 2vw, 1.4em);
+            font-weight: 600;
+            text-align: center;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        /* Birthday Spectacle */
+        .birthday-spectacle {
+            background: linear-gradient(135deg,
+                rgba(220, 38, 38, 0.15), /* Slightly more intense */
+                rgba(107, 70, 193, 0.15),
+                rgba(5, 150, 105, 0.15));
+            border: 5px solid transparent;
+            border-image: linear-gradient(45deg, var(--crimson), var(--royal-purple), var(--emerald), var(--amber), var(--crimson)) 1 stretch;
+            border-radius: 30px;
+            padding: clamp(40px, 7vw, 60px);
+            margin: clamp(50px, 8vh, 70px) 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(255,255,255,0.05);
+        }
+
+        .birthday-spectacle::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg, /* Define start angle */
+                var(--royal-gold),
+                var(--crimson),
+                var(--royal-purple),
+                var(--emerald),
+                var(--amber),
+                var(--royal-gold)
+            );
+            animation: rainbowSpin 12s linear infinite; /* Slower spin */
+            opacity: 0.12; /* Slightly more visible */
+        }
+
+        @keyframes rainbowSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .birthday-proclamation {
+            font-size: clamp(1.5em, 3vw, 2.2em);
+            font-weight: 700;
+            line-height: 1.6;
+            background: linear-gradient(135deg, var(--crimson), var(--royal-purple), var(--emerald), var(--crimson));
+            background-size: 250% 250%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            z-index: 1;
+            animation: proclamationPulse 4s ease-in-out infinite, proclamationShimmer 7s ease-in-out infinite;
+        }
+        @keyframes proclamationShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes proclamationPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        /* Epic Cake Animation */
+        .grand-cake-ceremony {
+            margin: clamp(50px, 8vh, 70px) 0;
+            text-align: center;
+        }
+
+        .epic-cake {
+            font-size: clamp(6em, 15vw, 9em);
+            display: inline-block;
+            animation: cakeSpectacle 6s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite; /* Bouncier */
+            filter: drop-shadow(0 0 35px var(--amber));
+        }
+
+        @keyframes cakeSpectacle {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                filter: drop-shadow(0 0 30px var(--amber));
+            }
+            25% {
+                transform: scale(1.15) rotate(8deg) translateY(-10px);
+                filter: drop-shadow(0 0 55px var(--royal-gold)) drop-shadow(0 0 20px var(--amber));
+            }
+            50% {
+                transform: scale(1.2) rotate(0deg) translateY(-5px);
+                filter: drop-shadow(0 0 45px var(--crimson)) drop-shadow(0 0 25px var(--royal-gold));
+            }
+            75% {
+                transform: scale(1.15) rotate(-8deg) translateY(-10px);
+                filter: drop-shadow(0 0 55px var(--royal-purple)) drop-shadow(0 0 20px var(--crimson));
+            }
+        }
+        .cake-subtitle{
+            font-size: clamp(1.5em, 3vw, 2em);
+            color: var(--royal-purple);
+            font-weight: 600;
+            margin-top: 25px;
+            text-shadow: 0 1px 5px var(--light-shadow);
+        }
+
+        /* Candle Extravaganza */
+        .candle-altar {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end; /* Align candles at their base */
+            gap: clamp(20px, 4vw, 30px);
+            margin: 60px 0;
+            min-height: 100px; /* Ensure space for animation */
+        }
+
+        .mystical-candle {
+            width: clamp(10px, 1.5vw, 14px);
+            height: clamp(50px, 10vh, 70px);
+            background: linear-gradient(180deg, var(--royal-gold), var(--deep-gold) 60%, var(--amber));
+            border-radius: 6px 6px 3px 3px; /* Tapered bottom */
+            position: relative;
+            animation: candleDance 3s ease-in-out infinite;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2), 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .mystical-candle:nth-child(odd) {
+            animation-delay: -1.5s; /* More staggered */
+            height: clamp(40px, 8vh, 60px); /* Vary heights */
+        }
+         .mystical-candle:nth-child(even) {
+            animation-delay: -0.75s;
+        }
+
+
+        .mystical-candle::before { /* Flame */
+            content: '';
+            position: absolute;
+            top: -18px; /* Adjusted for flame size */
+            left: 50%;
+            transform: translateX(-50%);
+            width: clamp(7px, 1.2vw, 10px);
+            height: clamp(18px, 3vh, 25px);
+            background: radial-gradient(ellipse, white, var(--amber) 30%, var(--crimson) 70%, transparent 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: flameSpectacle 1.8s ease-in-out infinite alternate; /* Faster flicker */
+            box-shadow: 0 0 10px var(--amber), 0 0 20px var(--royal-gold);
+        }
+
+        @keyframes candleDance {
+            0%, 100% { transform: translateY(0px) scaleY(1) scaleX(1); }
+            50% { transform: translateY(-10px) scaleY(1.05) scaleX(0.95); } /* Subtle sway */
+        }
+
+        @keyframes flameSpectacle {
+            0% {
+                transform: translateX(-50%) scale(1) rotate(-2deg) translateY(2px);
+                opacity: 0.9;
+                 box-shadow: 0 0 10px var(--amber), 0 0 20px var(--royal-gold), 0 0 5px white;
+            }
+            50% {
+                transform: translateX(-45%) scale(1.15) rotate(2deg) translateY(0px);
+                opacity: 1;
+                 box-shadow: 0 0 15px var(--royal-gold), 0 0 30px var(--amber), 0 0 8px white;
+            }
+            100% {
+                transform: translateX(-55%) scale(0.95) rotate(0deg) translateY(3px);
+                opacity: 0.85;
+                 box-shadow: 0 0 12px var(--amber), 0 0 25px var(--royal-gold), 0 0 6px white;
+            }
+        }
+
+        /* Majestic Signature */
+        .royal-signature {
+            text-align: right;
+            margin-top: clamp(60px, 10vh, 90px);
+            padding-right: 20px; /* Ensure it doesn't touch edge */
+            font-family: 'Cinzel', serif; /* Consistent majestic font */
+            font-size: clamp(1.2em, 2.2vw, 1.5em);
+            color: var(--royal-purple);
+            font-style: italic;
+            line-height: 1.7;
+            position: relative; /* For seal positioning context */
+            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .royal-signature em {
+            display: block; /* Ensure it's on a new line */
+            font-size: 0.9em;
+            color: var(--deep-gold);
+            margin-top: 5px;
+        }
+
+
+        /* Grand Seal */
+        .imperial-seal {
+            position: absolute;
+            bottom: -50px; /* Slightly more overlap */
+            right: clamp(20px, 10%, 120px); /* Responsive positioning */
+            width: clamp(80px, 12vw, 110px); /* Responsive size */
+            height: clamp(80px, 12vw, 110px);
+            background: radial-gradient(circle, var(--crimson) 40%, #7F1D1D 80%); /* More defined gradient */
+            border-radius: 50%;
+            border: 7px ridge #601010; /* Ornate border */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Uncial Antiqua', cursive;
+            font-size: clamp(2em, 3.5vw, 2.8em);
+            color: var(--royal-gold);
+            text-shadow: 0 0 15px var(--amber), 1px 1px 2px #451A03; /* Text pop */
+            box-shadow:
+                0 18px 35px var(--dark-shadow), /* Deeper shadow */
+                inset 0 0 25px rgba(255, 215, 0, 0.25),
+                inset 0 0 10px rgba(0,0,0,0.3); /* Inner shadow for depth */
+            animation: sealMajesty 4s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+            z-index: 5; /* Ensure it's above signature if overlapping */
+        }
+
+        @keyframes sealMajesty {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                box-shadow:
+                    0 15px 30px var(--dark-shadow),
+                    inset 0 0 20px rgba(255, 215, 0, 0.2),
+                    inset 0 0 10px rgba(0,0,0,0.3);
+            }
+            50% {
+                transform: scale(1.12) rotate(6deg) translateY(-5px); /* More dynamic */
+                box-shadow:
+                    0 22px 45px var(--dark-shadow),
+                    inset 0 0 35px rgba(255, 215, 0, 0.35),
+                    inset 0 0 15px rgba(0,0,0,0.4),
+                    0 0 60px rgba(220, 38, 38, 0.35);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .grand-scroll {
+                padding: 30px 20px; /* Reduced padding */
+                margin: 20px 10px; /* Reduced margin */
+                border-radius: 25px;
+            }
+
+            .majestic-title {
+                font-size: clamp(2.5em, 10vw, 3.2em); /* Adjusted clamp for mobile */
+                letter-spacing: 2px;
+            }
+             .grand-subtitle {
+                font-size: clamp(1.5em, 5vw, 1.8em);
+            }
+
+            .mega-illuminated-letter {
+                font-size: clamp(4em, 15vw, 5.5em);
+                padding: 10px 15px 0 0;
+            }
+            .epic-text {
+                 font-size: clamp(1em, 3.5vw, 1.2em);
+                 line-height: 1.8;
+            }
+
+            .photo-gallery-grid {
+                grid-template-columns: 1fr; /* Single column on smaller screens */
+                gap: 30px;
+            }
+            .photo-artifact:hover { /* Simplify hover on mobile to avoid sticky hover issues */
+                transform: perspective(1200px) scale(1.03) translateY(-3px);
+            }
+
+            .realm-title, .birthday-proclamation {
+                font-size: clamp(2em, 8vw, 2.5em);
+            }
+            .epic-cake {
+                font-size: clamp(5em, 20vw, 7em);
+            }
+            .cake-subtitle {
+                font-size: clamp(1.2em, 4vw, 1.5em);
+            }
+
+            .candle-altar { gap: 15px; }
+            .imperial-seal {
+                width: 70px; height: 70px; font-size: 1.8em; bottom: -30px; right: 20px; border-width: 5px;
+            }
+            .royal-signature { font-size: 1.1em; }
+
+            /* Hide complex JS particles on smaller screens if performance is an issue,
+               but particles.js is usually quite performant.
+               If you used the CSS version:
+            .particles-container {
+                 display: none;
+            }
+            */
+        }
+        @media (max-width: 480px) {
+            .loading-title { font-size: 2em; }
+            .majestic-title { font-size: 2.2em; }
+            .grand-subtitle { font-size: 1.3em; }
+            .mega-illuminated-letter { font-size: 3.5em; }
+            .epic-text { font-size: 1em; }
+            .ornate-corners { font-size: 2em; }
+            .scroll-top, .scroll-bottom { width: 120px; height: 30px; }
+        }
+
+    </style>
 </head>
-
 <body>
-  <div class="universe">
-    <div class="stars" id="stars"></div>
-    <div class="constellation" id="constellation"></div>
-    <div class="cosmic-spiral"></div>
-    <div class="comets" id="comets"></div>
-  </div>
-
-  <div class="main-container">
-
-    <p class="message">Shortie's birthday in .</p>
-
-    <div class="countdown-container">
-      <div class="time-orbit">
-        <div class="orbital-path"></div>
-        <div class="inner-circle"></div>
-
-        <div class="time-unit" id="days">
-          <div class="time-value">--</div>
-          <div class="time-label">Days</div>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-title">⚔️ PREPARING THE ROYAL SCROLL ⚔️</div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <div style="font-size: clamp(1em, 3vw, 1.2em); margin-top: 25px; letter-spacing: 1px;">Summoning birthday magic...</div>
         </div>
-
-        <div class="time-unit" id="hours">
-          <div class="time-value">--</div>
-          <div class="time-label">Hours</div>
-        </div>
-
-        <div class="time-unit" id="minutes">
-          <div class="time-value">--</div>
-          <div class="time-label">Minutes</div>
-        </div>
-
-        <div class="time-unit" id="seconds">
-          <div class="time-value">--</div>
-          <div class="time-label">Seconds</div>
-        </div>
-
-        <div class="core">
-          <div class="time-remaining" id="time-remaining">Until your day</div>
-        </div>
-      </div>
     </div>
 
-    <button class="interactive-button" id="interactive-button">Message from Kalu 💌</button>
+    <div id="particles-js"></div>
+
+    <div class="grand-container">
+        <div class="scroll-wrapper">
+            <div class="grand-scroll">
+                <div class="scroll-top"></div>
+                <div class="scroll-bottom"></div>
+                <div class="ornate-corners corner-tl">✧</div> <div class="ornate-corners corner-tr">✧</div>
+                <div class="ornate-corners corner-bl">✧</div>
+                <div class="ornate-corners corner-br">✧</div>
+
+                <header class="grand-header">
+                    <span class="royal-crown">👑</span>
+                    <h1 class="majestic-title">Sir Ishan</h1>
+                    <p class="grand-subtitle">The Grand Birthday Chronicle</p>
+                </header>
+
+                <div class="section-divider"></div>
+
+                <div class="illuminated-section">
+                    <span class="mega-illuminated-letter">B</span>
+                    <p class="epic-text">
+                        ehold! On this most magnificent day, the stars align and the heavens rejoice, for we celebrate the birth of the legendary Sir Ishan! A knight whose valor surpasses the mightiest warriors, whose wisdom rivals the ancient sages, and whose heart burns brighter than a thousand suns. Let the kingdom ring with celebration, let the dragons bow in respect, and let this day be remembered in the annals of history as the day joy conquered all!
+                    </p>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="birthday-spectacle">
+                    <div class="birthday-proclamation">
+                        🏰 MAY YOUR BIRTHDAY BE A LEGENDARY QUEST 🏰<br><br>
+                        Where every moment sparkles like enchanted gold,<br>
+                        Every laugh echoes through castle halls,<br>
+                        And every wish becomes a magical reality!
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="grand-cake-ceremony">
+                    <div class="epic-cake">🎂</div>
+                    <div class="cake-subtitle">
+                        THE ROYAL BIRTHDAY FEAST AWAITS!
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="photo-realm">
+                    <h2 class="realm-title">The Portrait Sanctum</h2>
+                    <div class="photo-gallery-grid">
+                        <div class="photo-artifact">
+                            <div class="photo-canvas" onclick="triggerPhotoUpload(this)">
+                                <span class="canvas-icon">🖼️</span> Upload the Chronicles of Adventure!
+                            </div>
+                            <div class="artifact-label">Legendary Quests</div>
+                        </div>
+                        <div class="photo-artifact">
+                            <div class="photo-canvas" onclick="triggerPhotoUpload(this)">
+                                <span class="canvas-icon">🏆</span>
+                                Capture the Moments of Glory!
+                            </div>
+                            <div class="artifact-label">Epic Victories</div>
+                        </div>
+                        <div class="photo-artifact">
+                            <div class="photo-canvas" onclick="triggerPhotoUpload(this)">
+                                <span class="canvas-icon">🎉</span>
+                                Preserve the Royal Celebrations!
+                            </div>
+                            <div class="artifact-label">Festive Memories</div>
+                        </div>
+                        <div class="photo-artifact">
+                            <div class="photo-canvas" onclick="triggerPhotoUpload(this)">
+                                <span class="canvas-icon">💖</span>
+                                Immortalize the Sacred Bond!
+                            </div>
+                            <div class="artifact-label">Treasured Moments</div>
+                        </div>
+                    </div>
+                </div>
+                <input type="file" id="photoUploadInput" accept="image/*" style="display: none;">
 
 
-  </div>
+                <div class="section-divider"></div>
 
-  <div class="celebration-container" id="celebration-container">
-    <h1 class="celebration-title">HAPPY BIRTHDAY!</h1>
-    <p class="celebration-message">Today the universe celebrates your existence. Every star shines for you, every cosmic
-      ray carries my love. You are my galaxy, my universe, my everything.</p>
-    <button class="celebration-button" id="celebration-button">❤️ I Love You Beyond Words ❤️</button>
-  </div>
+                <div class="candle-altar">
+                    <div class="mystical-candle"></div>
+                    <div class="mystical-candle"></div>
+                    <div class="mystical-candle"></div>
+                    <div class="mystical-candle"></div>
+                    <div class="mystical-candle"></div>
+                    <div class="mystical-candle"></div>
+                    <div class="mystical-candle"></div>
+                </div>
 
-  <script>
-    // Create star background
-    function createStars() {
-      const starsContainer = document.getElementById('stars');
-      const starCount = 200;
+                <div class="section-divider"></div>
 
-      for (let i = 0; i < starCount; i++) {
-        const star = document.createElement('div');
-        star.classList.add('star');
+                <div class="royal-signature">
+                    Penned with golden ink and sealed with eternal devotion,<br>
+                    Your most faithful companion<br>
+                    <em>On this day of celestial celebration</em>
+                </div>
 
-        const size = Math.random() * 3 + 1;
-        star.style.width = `${size}px`;
-        star.style.height = `${size}px`;
-
-        // Randomize position
-        star.style.top = `${Math.random() * 100}%`;
-        star.style.left = `${Math.random() * 100}%`;
-
-        // Add twinkling effect
-        const duration = Math.random() * 5 + 3;
-        star.style.animation = `pulse ${duration}s ease-in-out infinite alternate`;
-        star.style.animationDelay = `${Math.random() * duration}s`;
-
-        starsContainer.appendChild(star);
-      }
-    }
-
-    // Create constellation effect
-    function createConstellation() {
-      const constellationContainer = document.getElementById('constellation');
-      const points = [];
-      const lineCount = 15;
-
-      // Create random points for constellation
-      for (let i = 0; i < 20; i++) {
-        points.push({
-          x: Math.random() * 100,
-          y: Math.random() * 100
+                <div class="imperial-seal">I</div> </div> </div> </div> <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        // Hide loading screen after a delay and start scroll reveal
+        window.addEventListener('load', () => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const scrollWrapper = document.querySelector('.scroll-wrapper');
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                // Ensure the scroll animation starts after loading screen is gone
+                // The CSS animation-delay on .scroll-wrapper handles this too
+            }, 3500); // Matches loadingProgress animation duration
         });
-      }
 
-      // Create connecting lines between random points
-      for (let i = 0; i < lineCount; i++) {
-        const startPoint = points[Math.floor(Math.random() * points.length)];
-        const endPoint = points[Math.floor(Math.random() * points.length)];
 
-        const dx = endPoint.x - startPoint.x;
-        const dy = endPoint.y - startPoint.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+        // Particles.js Configuration
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 60, // Number of particles
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": ["#FFD700", "#F59E0B", "#B8860B"] // Array of gold/amber colors
+                },
+                "shape": {
+                    "type": "circle", // "star" or "edge" could also work
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    }
+                },
+                "opacity": {
+                    "value": 0.6, // Base opacity
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 0.8,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3, // Base size
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 3,
+                        "size_min": 0.5,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": false, // No lines connecting particles for a softer look
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 1.5, // Speed of particle movement
+                    "direction": "none",
+                    "random": true,
+                    "straight": false,
+                    "out_mode": "out", // Particles disappear when they go out of bounds
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab" // "bubble" or "repulse" are other options
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push" // Adds particles on click
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 100,
+                        "line_opacity": 0.3
+                    },
+                    "bubble": {
+                        "distance": 200,
+                        "size": 5,
+                        "duration": 2,
+                        "opacity": 0.8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 150,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
 
-        const line = document.createElement('div');
-        line.classList.add('constellation-line');
-        line.style.width = `${distance}%`;
-        line.style.top = `${startPoint.y}%`;
-        line.style.left = `${startPoint.x}%`;
-        line.style.transform = `rotate(${angle}deg)`;
+        // Placeholder for photo upload functionality
+        const photoUploadInput = document.getElementById('photoUploadInput');
+        let currentCanvas = null;
 
-        constellationContainer.appendChild(line);
-      }
-    }
-
-    // Create comet effect
-    function createComets() {
-      const cometsContainer = document.getElementById('comets');
-      const cometInterval = setInterval(() => {
-        const comet = document.createElement('div');
-        comet.classList.add('comet');
-
-        // Randomize comet properties
-        const width = Math.random() * 100 + 50;
-        const angle = Math.random() * 20 - 10; // -10 to 10 degrees
-        const offset = Math.random() * 200 - 100; // -100 to 100px vertical offset
-        const duration = Math.random() * 2 + 2; // 2-4 seconds
-
-        comet.style.width = `${width}px`;
-        comet.style.top = `${Math.random() * 50}%`;
-        comet.style.left = '-100px';
-        comet.style.setProperty('--angle', `${angle}deg`);
-        comet.style.setProperty('--offset', `${offset}px`);
-        comet.style.animation = `comet ${duration}s linear forwards`;
-
-        cometsContainer.appendChild(comet);
-
-        // Remove comet after animation completes
-        setTimeout(() => {
-          comet.remove();
-        }, duration * 1000);
-      }, 4000); // New comet every 4 seconds
-    }
-
-    // Interactive magic dust effect
-    function createMagicTrail(x, y) {
-      for (let i = 0; i < 10; i++) {
-        const dust = document.createElement('div');
-        dust.classList.add('magic-dust');
-
-        // Random color from our theme
-        const colors = [
-          'rgba(255, 58, 124, 0.8)',
-          'rgba(123, 44, 191, 0.8)',
-          'rgba(20, 245, 218, 0.8)',
-          'rgba(255, 193, 7, 0.8)'
-        ];
-        dust.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-
-        // Position at cursor
-        dust.style.left = `${x}px`;
-        dust.style.top = `${y}px`;
-
-        // Random direction and distance
-        const angle = Math.random() * Math.PI * 2;
-        const distance = Math.random() * 100 + 50;
-        const dx = Math.cos(angle) * distance;
-        const dy = Math.sin(angle) * distance;
-
-        dust.style.setProperty('--dx', `${dx}px`);
-        dust.style.setProperty('--dy', `${dy}px`);
-
-        // Animation
-        dust.style.animation = `magic-trail 1s forwards`;
-
-        document.body.appendChild(dust);
-
-        // Remove dust after animation
-        setTimeout(() => {
-          dust.remove();
-        }, 1000);
-      }
-    }
-
-    // Create fireworks for celebration
-    function createFirework(x, y) {
-      const colors = [
-        '#ff3a7c', '#7b2cbf', '#14f5da', '#ffcc00',
-        '#ff85a2', '#a56eff', '#63e6be', '#ffdd33'
-      ];
-
-      const fireworksCount = 30;
-
-      for (let i = 0; i < fireworksCount; i++) {
-        const angle = (Math.PI * 2 * i) / fireworksCount;
-        const distance = 150 + Math.random() * 100;
-        const color = colors[Math.floor(Math.random() * colors.length)];
-
-        const firework = document.createElement('div');
-        firework.classList.add('firework');
-        firework.style.backgroundColor = color;
-
-        // Set animation properties
-        firework.style.setProperty('--x', `${x}px`);
-        firework.style.setProperty('--y', `${y}px`);
-        firework.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
-        firework.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
-        firework.style.setProperty('--color', color);
-
-        firework.style.animation = `firework-explosion 1.5s forwards`;
-
-        document.body.appendChild(firework);
-
-        // Remove the firework element after animation completes
-        setTimeout(() => {
-          firework.remove();
-        }, 1500);
-      }
-    }
-
-    // Countdown Timer logic
-    const countdownDate = new Date("May 24, 2025 00:00:00").getTime();
-
-    function updateCountdown() {
-      const now = new Date().getTime();
-      const distance = countdownDate - now;
-
-      if (distance < 0) {
-        // Birthday has arrived!
-        clearInterval(countdownInterval);
-        document.getElementById('celebration-container').classList.add('celebration-active');
-        startBirthdayCelebration();
-        return;
-      }
-
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      document.querySelector('#days .time-value').textContent = days;
-      document.querySelector('#hours .time-value').textContent = hours;
-      document.querySelector('#minutes .time-value').textContent = minutes;
-      document.querySelector('#seconds .time-value').textContent = seconds;
-
-      // Update the time remaining message based on days
-      const timeRemainingEl = document.getElementById('time-remaining');
-      if (days > 30) {
-        timeRemainingEl.textContent = "Cosmic Journey Begins";
-      } else if (days > 7) {
-        timeRemainingEl.textContent = "Getting Closer";
-      } else if (days > 1) {
-        timeRemainingEl.textContent = "Almost There!";
-      } else if (days === 1) {
-        timeRemainingEl.textContent = "Just One Day!";
-      } else if (hours >= 1) {
-        timeRemainingEl.textContent = "Only Hours Left!";
-      } else {
-        timeRemainingEl.textContent = "Minutes Away!";
-      }
-    }
-
-    // Interactive elements
-    document.addEventListener('mousemove', function (e) {
-      if (Math.random() < 0.1) { // Control the density of magic dust
-        createMagicTrail(e.clientX, e.clientY);
-      }
-    });
-
-    const interactiveButton = document.getElementById('interactive-button');
-    interactiveButton.addEventListener('click', function () {
-      // Create cosmic explosion from button
-      const rect = this.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top + rect.height / 2;
-
-      createFirework(x, y);
-
-      // Create more fireworks at cosmic positions
-      for (let i = 0; i < 5; i++) {
-        setTimeout(() => {
-          const randomX = Math.random() * window.innerWidth;
-          const randomY = Math.random() * (window.innerHeight / 2);
-          createFirework(randomX, randomY);
-        }, i * 300);
-      }
-
-      // Update button text temporarily
-      this.textContent = "✨ Love you  ✨";
-      setTimeout(() => {
-        this.textContent = "Message from Kalu 💌";
-      }, 3000);
-    });
-
-    // Birthday celebration
-    function startBirthdayCelebration() {
-      // Create continuous fireworks
-      setInterval(() => {
-        const randomX = Math.random() * window.innerWidth;
-        const randomY = Math.random() * (window.innerHeight / 2);
-        createFirework(randomX, randomY);
-      }, 800);
-
-      const celebrationButton = document.getElementById('celebration-button');
-      celebrationButton.addEventListener('click', function () {
-        // Create explosion of fireworks
-        for (let i = 0; i < 10; i++) {
-          setTimeout(() => {
-            const randomX = Math.random() * window.innerWidth;
-            const randomY = Math.random() * window.innerHeight;
-            createFirework(randomX, randomY);
-          }, i * 200);
+        function triggerPhotoUpload(canvasElement) {
+            currentCanvas = canvasElement;
+            photoUploadInput.click(); // Trigger the hidden file input
         }
-      });
-    }
 
-    // Initialize all visual elements
-    createStars();
-    createConstellation();
-    createComets();
+        photoUploadInput.addEventListener('change', function(event) {
+            if (event.target.files && event.target.files[0] && currentCanvas) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Create an image element
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '15px'; // Match canvas border radius
 
-    // Start countdown
-    const countdownInterval = setInterval(updateCountdown, 1000);
-    updateCountdown();
+                    // Clear the canvas and add the image
+                    currentCanvas.innerHTML = ''; // Remove text and icon
+                    currentCanvas.appendChild(img);
+                    currentCanvas.style.padding = '0'; // Remove padding if image fills it
+                    currentCanvas.style.borderStyle = 'solid'; // Make border solid
+                    currentCanvas.style.borderColor = 'var(--royal-gold)';
+                }
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        });
 
-    // Check if it's already birthday time
-    if (new Date() >= countdownDate) {
-      document.getElementById('celebration-container').classList.add('celebration-active');
-      startBirthdayCelebration();
-    }
-  </script>
+    </script>
 </body>
-
 </html>
